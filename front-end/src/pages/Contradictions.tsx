@@ -37,14 +37,14 @@ export function Contradictions() {
           </span>
           <div>
             <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-warn">
-              Seeded disagreements
+              Official sources
             </p>
             <h1 className="mt-1 text-3xl font-semibold tracking-tight text-ink">
-              Contradiction cards
+              Where documents disagree
             </h1>
             <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted">
-              When two official sources disagree, Suchna shows both. These cards are the
-              demo seed used in the live answer stream.
+              When two institute PDFs say different things, Suchna shows both instead of
+              picking a quiet average.
             </p>
           </div>
         </div>

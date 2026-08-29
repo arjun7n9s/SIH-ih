@@ -21,18 +21,18 @@ export function VoiceOverlay({
 
   return (
     <div className="fixed inset-0 z-50 grid place-items-end bg-ink/25 p-4 backdrop-blur-[2px] sm:place-items-center">
-      <div className="w-full max-w-md rounded-[28px] border border-line bg-surface p-6 shadow-2xl">
+      <div className="w-full max-w-md rounded-[28px] border-2 border-ink bg-surface p-6 shadow-[8px_8px_0_var(--color-ink)]">
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-green">
-              Melia multilingual
+              Voice
             </p>
             <h2 className="mt-1 text-lg font-semibold text-ink">
-              {processing ? "Transcribing…" : recording ? "Listening…" : "Voice"}
+              {processing ? "Turning speech into text…" : recording ? "Listening…" : "Speak your question"}
             </h2>
             <p className="mt-1 text-sm text-muted">
-              Speak in English, Hindi, or Hinglish. Audio goes to Melia-1 batch, then
-              into your question box.
+              English, Hindi, or Hinglish. When you stop, the transcript lands in the box
+              so you can edit it before sending.
             </p>
           </div>
           <button
@@ -50,7 +50,7 @@ export function VoiceOverlay({
             {Array.from({ length: 18 }).map((_, i) => (
               <span
                 key={i}
-                className={`wave-bar w-1 rounded-full bg-gradient-to-t from-green to-blue-bright ${
+                className={`wave-bar w-1 rounded-full bg-green ${
                   recording || processing ? "" : "opacity-30"
                 }`}
                 style={{
@@ -71,7 +71,7 @@ export function VoiceOverlay({
             type="button"
             onClick={processing ? undefined : onStop}
             disabled={processing}
-            className="grid h-16 w-16 place-items-center rounded-full bg-gradient-to-br from-green to-blue text-white shadow-[0_16px_40px_-18px_rgba(11,122,59,0.8)] disabled:opacity-70"
+            className="grid h-16 w-16 place-items-center rounded-full bg-ink text-paper shadow-[5px_5px_0_var(--color-poster)] disabled:opacity-70"
           >
             {processing ? (
               <Loader2 className="animate-spin" size={22} />
@@ -82,7 +82,7 @@ export function VoiceOverlay({
             )}
           </button>
           <p className="text-xs text-muted">
-            {processing ? "Sending clip to Melia…" : "Tap to stop and fill the composer"}
+            {processing ? "Transcribing your clip…" : "Tap to stop and fill the question box"}
           </p>
         </div>
       </div>

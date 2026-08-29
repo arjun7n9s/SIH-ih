@@ -32,7 +32,7 @@ export function Composer({
       <div className="flex items-end gap-2">
         <button
           type="button"
-          aria-label="Upload companion file"
+          aria-label="Attach a circular"
           disabled={disabled}
           onClick={() => fileRef.current?.click()}
           className="mb-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-full text-muted hover:bg-mist hover:text-ink disabled:opacity-40"
@@ -86,7 +86,7 @@ export function Composer({
           aria-label="Send"
           disabled={disabled || !value.trim()}
           onClick={onSubmit}
-          className="mb-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-full bg-gradient-to-br from-green to-blue text-white shadow-sm disabled:opacity-35"
+          className="mb-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-full bg-ink text-paper shadow-[3px_3px_0_var(--color-poster)] disabled:opacity-35"
         >
           <SendHorizontal size={16} />
         </button>

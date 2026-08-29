@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { FeatureIcon } from "../components/FeatureIcon";
 import { FEATURES } from "../lib/api";
+import { MARK_SRC } from "../lib/brand";
 
 const STEPS = [
   {
@@ -23,7 +24,7 @@ export function Landing() {
       <header className="border-b-2 border-ink">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
           <div className="flex items-center gap-3">
-            <img src="/iiitdmj-logo.png" alt="" className="h-10 w-10 object-contain" />
+            <img src={MARK_SRC} alt="" className="h-10 w-10 object-contain" />
             <div>
               <p className="suchna-kicker">PDPM IIITDM Jabalpur</p>
               <p className="text-lg font-semibold tracking-tight">Suchna</p>
@@ -75,7 +76,7 @@ export function Landing() {
             <ul className="mt-8 grid max-w-lg gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-muted sm:grid-cols-2">
               {[
                 "Official corpus only",
-                "Hinglish voice · Melia",
+                "Hinglish voice",
                 "Streaming answers",
                 "Open contradictions",
               ].map((item) => (
@@ -92,7 +93,7 @@ export function Landing() {
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <img
-                    src="/iiitdmj-logo.png"
+                    src={MARK_SRC}
                     alt=""
                     className="h-14 w-14 object-contain"
                   />
@@ -112,7 +113,7 @@ export function Landing() {
                 {[
                   ["Ask fees & refunds", "Tables when money is on the line."],
                   ["Catch disagreeing PDFs", "Both sources stay visible."],
-                  ["Speak Hinglish", "Mic → Melia → cited answer."],
+                  ["Speak Hinglish", "Talk, then send a cited answer."],
                 ].map(([title, body]) => (
                   <div
                     key={title}
@@ -134,9 +135,6 @@ export function Landing() {
                 <span className="suchna-kicker" style={{ color: "var(--color-trip)" }}>Enter</span>
               </div>
             </div>
-            <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
-              Mark pulse sprite · loader / brand motion
-            </p>
           </div>
         </section>
 
@@ -152,8 +150,8 @@ export function Landing() {
                 </h2>
               </div>
               <p className="max-w-sm text-sm leading-relaxed text-muted">
-                Contradiction-aware assistant wired to IIITDMJ documents — playful stamp
-                craft, institutional green and blue.
+                Built on IIITDMJ ordinances, fee circulars, and hostel pages — so a
+                student can open the same PDF the answer came from.
               </p>
             </div>
 
@@ -184,15 +182,9 @@ export function Landing() {
                 <span className="text-trip">Get receipts.</span>
               </h2>
               <p className="mt-4 text-sm leading-relaxed text-muted">
-                Short poster headlines, then the human paragraph. Motion means something —
-                the mark breathes while docs load.
+                Ask in the language you actually use. Suchna searches the campus corpus
+                and keeps sources, dates, and disagreements on the page.
               </p>
-              <div className="mt-6 inline-flex items-center gap-3 border-2 border-ink bg-paper px-3 py-2 shadow-[4px_4px_0_var(--color-poster)]">
-                <img src="/iiitdmj-logo.png" alt="" className="h-9 w-9 object-contain" />
-                <span className="font-mono text-[10px] uppercase tracking-[0.16em]">
-                  Keys stay on the backend
-                </span>
-              </div>
             </div>
             <ol className="space-y-3">
               {STEPS.map((step, i) => (
@@ -223,8 +215,8 @@ export function Landing() {
                 Ask a real question.
               </h2>
               <p className="mt-3 max-w-xl text-sm text-paper/75">
-                Hostel fees, attendance, refund windows — Melia voice when you’d rather
-                speak Hinglish than type Devanagari.
+                Hostel fees, attendance, refund windows — type or speak, including
+                Hinglish, then open the circular yourself.
               </p>
             </div>
             <Link
@@ -245,7 +237,7 @@ export function Landing() {
       <footer className="border-t-2 border-ink">
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-5 py-6 font-mono text-[11px] uppercase tracking-[0.16em] text-muted sm:flex-row sm:items-center sm:justify-between">
           <p>Suchna · PDPM IIITDM Jabalpur · SIH</p>
-          <p>Green + blue from the mark · first-love craft</p>
+          <p>PDPM IIITDM Jabalpur campus knowledge desk</p>
         </div>
       </footer>
     </div>

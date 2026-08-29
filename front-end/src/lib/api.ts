@@ -14,7 +14,7 @@ export const SUGGESTIONS = [
 export const FEATURES = [
   {
     title: "Ask in English or Hinglish",
-    body: "Type or speak campus questions the way students actually talk. Melia handles multilingual clips; chat answers stay grounded in institute docs.",
+    body: "Type or speak campus questions the way students actually talk. Voice works in Hindi, English, and Hinglish; answers stay grounded in institute docs.",
     icon: "languages" as const,
   },
   {
@@ -38,8 +38,8 @@ export const FEATURES = [
     icon: "calendar" as const,
   },
   {
-    title: "Companion uploads",
-    body: "Drop a handout or circular for a short, ephemeral summary while you keep asking the live index.",
+    title: "Attach a circular",
+    body: "Drop a handout for a short, one-session summary while you keep asking the live campus index.",
     icon: "upload" as const,
   },
 ];

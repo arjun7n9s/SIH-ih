@@ -10,6 +10,7 @@ from app.config import settings
 from app.fixtures.demo import pick_demo
 from app.models.schema import ChatRequest, ChatSyncResponse
 from app.services import rag
+from app.services.status_copy import labels_for
 
 router = APIRouter(prefix="/api", tags=["chat"])
 
@@ -62,20 +63,36 @@ async def chat_stream(body: ChatRequest) -> StreamingResponse:
             await asyncio.sleep(0.015)
 
     async def gen_live():
-        yield _sse({"type": "status", "label": "Searching institute documents..."})
+        stages = labels_for(body.query)
+        yield _sse({"type": "status", "label": stages[0]})
+        task = asyncio.create_task(asyncio.to_thread(rag.answer, body.query))
+        step = 0
         try:
-            result = await asyncio.to_thread(rag.answer, body.query)
-        except Exception as err:  # noqa: BLE001
-            yield _sse({"type": "token", "text": f"RAG error: {err}"})
+            while not task.done():
+                done, _ = await asyncio.wait({task}, timeout=1.35)
+                if done:
+                    break
+                step = min(step + 1, len(stages) - 1)
+                yield _sse({"type": "status", "label": stages[step]})
+            result = task.result()
+        except Exception:  # noqa: BLE001
+            if not task.done():
+                task.cancel()
+            yield _sse(
+                {
+                    "type": "token",
+                    "text": "Couldn’t finish that search. Try the question once more.",
+                }
+            )
             yield _sse({"type": "done"})
             return
         # stream token in slices; other events first
         for event in _events_from_result(result):
             if event.get("type") == "token":
                 text = event["text"]
-                step = 120
-                for i in range(0, len(text), step):
-                    yield _sse({"type": "token", "text": text[i : i + step]})
+                chunk = 120
+                for i in range(0, len(text), chunk):
+                    yield _sse({"type": "token", "text": text[i : i + chunk]})
                     await asyncio.sleep(0.008)
             else:
                 yield _sse(event)

@@ -14,7 +14,9 @@ export function OrgHeader({ to = "/", className = "", compact = false }: Props) 
     <img
       src={ORG_HEADER_SRC}
       alt="PDPM IIITDM Jabalpur"
-      className={`object-contain object-left ${compact ? "h-9 sm:h-10" : "h-12 sm:h-14"}`}
+      className={`object-contain object-left ${
+        compact ? "h-9 max-w-[min(48vw,240px)] sm:h-10 sm:max-w-[280px]" : "h-12 sm:h-14"
+      }`}
     />
   );
 

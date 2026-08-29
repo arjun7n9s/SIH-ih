@@ -97,7 +97,7 @@ export function LogoLoader({
   return (
     <div className="flex flex-col items-center justify-center gap-3 py-10">
       <LogoSprite size={size} label={label} />
-      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted">{label}</p>
+      <p className="max-w-xs text-center text-sm leading-relaxed text-muted">{label}</p>
     </div>
   );
 }

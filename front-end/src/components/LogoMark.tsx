@@ -1,21 +1,36 @@
+import { MARK_SRC } from "../lib/brand";
+
 type Props = {
   size?: number;
   className?: string;
+  label?: string;
 };
 
-export function LogoMark({ size = 72, className = "" }: Props) {
+/** Static campus mark — no sprite animation. */
+export function LogoMark({ size = 88, className = "", label = "IIITDM Jabalpur" }: Props) {
   return (
-    <div
-      className={`relative grid place-items-center rounded-full bg-gradient-to-br from-green-soft to-blue-soft shadow-[0_18px_50px_-28px_rgba(11,122,59,0.55)] ring-1 ring-line ${className}`}
-      style={{ width: size, height: size }}
-    >
-      <img
-        src="/iiitdmj-logo.png"
-        alt="IIITDM Jabalpur"
-        width={Math.round(size * 0.62)}
-        height={Math.round(size * 0.62)}
-        className="object-contain"
-      />
+    <img
+      src={MARK_SRC}
+      alt={label}
+      width={size}
+      height={size}
+      className={`object-contain ${className}`}
+      draggable={false}
+    />
+  );
+}
+
+export function LogoLoader({
+  label = "Searching campus docs…",
+  size = 72,
+}: {
+  label?: string;
+  size?: number;
+}) {
+  return (
+    <div className="flex flex-col items-center justify-center gap-3 py-10">
+      <LogoMark size={size} label={label} />
+      <p className="max-w-xs text-center text-sm leading-relaxed text-muted">{label}</p>
     </div>
   );
 }

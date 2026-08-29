@@ -16,7 +16,8 @@ class Settings(BaseSettings):
     use_mock: bool = False
     cors_origins: str = (
         "http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:3000,"
-        "http://127.0.0.1:5173,http://127.0.0.1:5174,http://127.0.0.1:5175,http://127.0.0.1:3000"
+        "http://127.0.0.1:5173,http://127.0.0.1:5174,http://127.0.0.1:5175,http://127.0.0.1:3000,"
+        "https://suchna.vercel.app,https://suchna-tejesh-kunapareddy-s-projects.vercel.app"
     )
 
     aimlapi_key: str = ""

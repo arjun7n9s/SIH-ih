@@ -37,3 +37,6 @@ front-end/public/brand/*-clear.png
 front-end/public/brand/*-paper.png
 front-end/public/brand/*-64f.png
 
+
+.vercel
+.env*

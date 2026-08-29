@@ -1,6 +1,7 @@
 /** Brand assets — keep sprite meta in sync with public/brand/iiitdmj-logo-sprite.json */
 export const ORG_HEADER_SRC = "/brand/iiitdmj-org-header.png";
-export const MARK_SRC = "/iiitdmj-logo.png";
+/** Transparent campus mark (cache-bust when the asset is replaced). */
+export const MARK_SRC = "/iiitdmj-logo.png?v=clear";
 
 export const SITE_PAPER = "#F1F4EC";
 export const SITE_MIST = "#E6ECE3";

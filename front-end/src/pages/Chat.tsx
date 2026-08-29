@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { AnswerPanel } from "../components/AnswerPanel";
 import { BootGate } from "../components/BootGate";
 import { Composer } from "../components/Composer";
-import { LogoLoader, LogoSprite } from "../components/LogoSprite";
+import { LogoLoader, LogoMark } from "../components/LogoMark";
 import { OrgHeader } from "../components/OrgHeader";
 import { VoiceOverlay } from "../components/VoiceOverlay";
 import {
@@ -52,11 +52,11 @@ function ChatShell() {
         const local = import.meta.env.DEV;
         setReadyLabel(
           local
-            ? "Backend offline — start uvicorn on :8000"
-            : "API unreachable — check the Vercel FastAPI service",
+            ? "Campus index is offline"
+            : "Campus index is unreachable",
         );
-      } else if (h.live_chat) setReadyLabel("Live index ready");
-      else setReadyLabel("API up · index/mock mode");
+      } else if (h.live_chat) setReadyLabel("Campus index ready");
+      else setReadyLabel("Answers available");
     });
   }, []);
 
@@ -99,7 +99,7 @@ function ChatShell() {
   async function onUpload(file: File) {
     try {
       const json = await uploadCompanion(file);
-      setBanner(json.banner || json.summary || "Companion upload received (ephemeral).");
+      setBanner(json.banner || json.summary || "File attached for this session only.");
     } catch (err) {
       setBanner(err instanceof Error ? err.message : String(err));
     }
@@ -145,12 +145,10 @@ function ChatShell() {
       const blob = new Blob(chunksRef.current, { type: "audio/webm" });
       if (blob.size < 800) throw new Error("Clip too short — hold the mic a moment longer.");
       const result = await transcribeVoice(blob);
-      if (!result.text?.trim()) throw new Error("Melia returned empty text. Try again.");
+      if (!result.text?.trim()) throw new Error("Didn’t catch that — try speaking a little longer.");
       setDraft(result.text.trim());
       setVoiceOpen(false);
-      if (result.languages?.length) {
-        setBanner(`Transcribed with Melia (${result.languages.join(", ")})`);
-      }
+      setBanner("Transcript added — edit if needed, then send.");
     } catch (err) {
       setVoiceError(err instanceof Error ? err.message : String(err));
     } finally {
@@ -163,9 +161,9 @@ function ChatShell() {
   const empty = !showing && !busy;
 
   return (
-    <div className="flex min-h-dvh bg-mist">
+    <div className="flex h-dvh overflow-hidden bg-mist">
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-[300px] border-r border-line bg-surface p-4 transition-transform lg:static lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 flex h-dvh w-[300px] flex-col border-r border-line bg-surface p-4 transition-transform lg:static lg:h-full lg:translate-x-0 ${
           sidebar ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -228,7 +226,7 @@ function ChatShell() {
         />
       )}
 
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         <header className="border-b-2 border-ink bg-paper/95 backdrop-blur">
           <div className="flex items-center justify-between gap-3 px-4 py-3">
             <div className="flex min-w-0 items-center gap-3">
@@ -260,7 +258,7 @@ function ChatShell() {
           <div className="suchna-tripwire" />
         </header>
 
-        <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-8 sm:px-8">
+        <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto px-4 py-8 sm:px-8">
           <div className="mx-auto w-full max-w-2xl">
             {banner && (
               <p className="mb-4 rounded-2xl border border-blue/20 bg-blue-soft px-4 py-3 text-sm text-navy">
@@ -269,15 +267,14 @@ function ChatShell() {
             )}
 
             {empty ? (
-              <div className="flex flex-col items-center pt-8 text-center sm:pt-16">
-                <LogoSprite size="lg" label="Suchna" />
-                <OrgHeader to="" className="mt-4 justify-center" />
+              <div className="flex flex-col items-center pt-6 text-center sm:pt-10">
+                <LogoMark size={96} label="Suchna" />
                 <h1 className="mt-6 text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
                   Hello, I’m Suchna
                 </h1>
                 <p className="mt-2 max-w-md text-sm leading-relaxed text-muted sm:text-base">
-                  Your IIITDM Jabalpur knowledge partner — citations, contradictions, and
-                  Melia voice for Hinglish questions.
+                  Your IIITDM Jabalpur knowledge partner — citations, dates, and
+                  honest notes when two official PDFs disagree.
                 </p>
                 <div className="mt-8 grid w-full gap-2">
                   {SUGGESTIONS.map((s) => (
@@ -288,10 +285,7 @@ function ChatShell() {
                       onClick={() => void ask(s.query)}
                       className="card-lift flex items-center justify-between rounded-2xl border border-line bg-surface px-4 py-3 text-left text-sm"
                     >
-                      <span>
-                        <span className="font-medium text-ink">{s.label}</span>
-                        <span className="mt-0.5 block text-xs text-muted">{s.query}</span>
-                      </span>
+                      <span className="font-medium text-ink">{s.label}</span>
                       <span className="text-muted">→</span>
                     </button>
                   ))}
@@ -319,7 +313,7 @@ function ChatShell() {
               onUpload={(f) => void onUpload(f)}
             />
             <p className="mt-2 text-center font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
-              Enter to send · Mic uses Melia batch · + uploads companion
+              Enter to send · Mic for Hindi or Hinglish · + attaches a circular
             </p>
           </div>
         </div>
