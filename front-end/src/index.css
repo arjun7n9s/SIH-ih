@@ -1,0 +1,234 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --font-poster: "Anton", Impact, sans-serif;
+
+  /* First-love craft × IIITDMJ mark */
+  --color-paper: #f1f4ec;
+  --color-ink: #111111;
+  --color-poster: #0b7a3b;
+  --color-trip: #0b6bcb;
+  --color-muted: #4d5c52;
+  --color-line: #111111;
+  --color-surface: #f1f4ec;
+  --color-mist: #e6ece3;
+  --color-green: #0b7a3b;
+  --color-green-bright: #12a34a;
+  --color-green-soft: #d7eadc;
+  --color-blue: #0b6bcb;
+  --color-blue-bright: #2f9be8;
+  --color-blue-soft: #d9eaf8;
+  --color-navy: #0a2f6b;
+  --color-warn: #c45c12;
+  --color-warn-soft: #fff3e8;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+a,
+[role="button"] {
+  cursor: pointer;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--color-poster) 32%, white);
+}
+
+/* ── First-love paper (IIITDMJ) ─────────────────────────── */
+.suchna-paper {
+  background-color: var(--color-paper);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  color: var(--color-ink);
+}
+
+.suchna-poster {
+  font-family: var(--font-poster);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  line-height: 0.94;
+}
+
+.suchna-poster h1,
+.suchna-poster.h1,
+h1.suchna-poster {
+  line-height: 0.96;
+}
+
+.suchna-kicker {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-poster);
+}
+
+.suchna-rule {
+  height: 2px;
+  background: var(--color-ink);
+}
+
+.suchna-tripwire {
+  height: 3px;
+  background: var(--color-trip);
+}
+
+/* Stamp CTA — ink block, cream type, green offset (poster role) */
+.suchna-stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-family: var(--font-poster);
+  font-size: 1.05rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 2px solid var(--color-ink);
+  padding: 0.7rem 1.15rem;
+  box-shadow: 7px 7px 0 var(--color-poster);
+  transition: transform 80ms ease, box-shadow 80ms ease, background 80ms ease, color 80ms ease;
+}
+
+.suchna-stamp:hover {
+  background: var(--color-poster);
+  color: var(--color-paper);
+  transform: translate(3px, 3px);
+  box-shadow: 4px 4px 0 var(--color-ink);
+}
+
+.suchna-stamp:active {
+  transform: translate(7px, 7px);
+  box-shadow: 0 0 0 var(--color-poster);
+}
+
+.suchna-stamp-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: transparent;
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 2px solid var(--color-ink);
+  padding: 0.65rem 1rem;
+  box-shadow: 4px 4px 0 var(--color-trip);
+  transition: transform 80ms ease, box-shadow 80ms ease, background 80ms ease;
+}
+
+.suchna-stamp-ghost:hover {
+  background: var(--color-ink);
+  color: var(--color-paper);
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--color-trip);
+}
+
+.suchna-chip {
+  border: 2px solid var(--color-ink);
+  background: transparent;
+  color: var(--color-ink);
+  font-size: 0.875rem;
+  padding: 0.5rem 0.85rem;
+}
+
+.suchna-chip:hover {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+
+.suchna-panel {
+  background: var(--color-paper);
+  border: 2px solid var(--color-ink);
+  box-shadow: 8px 8px 0 var(--color-poster);
+}
+
+.suchna-panel-blue {
+  box-shadow: 8px 8px 0 var(--color-trip);
+}
+
+.suchna-edge-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+  border: 2px solid var(--color-ink);
+  background: var(--color-paper);
+  padding: 0.35rem 0.55rem;
+  transform: rotate(-3deg);
+  box-shadow: 3px 3px 0 var(--color-trip);
+}
+
+.suchna-ink-field {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+
+.suchna-ink-field .suchna-kicker {
+  color: color-mix(in oklab, var(--color-green-bright) 80%, white);
+}
+
+/* Headline slam — meaningful motion */
+@keyframes suchna-slam {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.suchna-slam {
+  animation: suchna-slam 420ms cubic-bezier(0.2, 0.85, 0.25, 1) both;
+}
+
+.suchna-slam-delay {
+  animation-delay: 90ms;
+}
+
+.wave-bar {
+  animation: wave 1s ease-in-out infinite;
+}
+
+@keyframes wave {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .suchna-slam,
+  .wave-bar,
+  .suchna-stamp,
+  .suchna-stamp-ghost {
+    animation: none !important;
+    transition: none !important;
+  }
+}

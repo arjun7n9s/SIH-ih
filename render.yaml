@@ -31,7 +31,7 @@ services:
     name: suchna-web
     runtime: static
     plan: starter
-    rootDir: frontend
+    rootDir: front-end
     buildCommand: npm ci && npm run build
     staticPublishPath: dist
     envVars:

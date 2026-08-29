@@ -1,0 +1,219 @@
+[
+  {
+    "id": "fee-phd-2025-p1-t0",
+    "document_id": "fee-phd-2025",
+    "page": 1,
+    "kind": "table",
+    "title": "fee-phd-2025 table (p.1)",
+    "rows": [
+      {
+        "A. One-time payment at the time of admission": "Sr. No.",
+        "col1": "Head",
+        "col2": "Gen/OBC/EWS",
+        "col3": "SC/ST"
+      },
+      {
+        "A. One-time payment at the time of admission": "1.",
+        "col1": "Admission",
+        "col2": "2000",
+        "col3": "2000"
+      },
+      {
+        "A. One-time payment at the time of admission": "2.",
+        "col1": "Grade Card",
+        "col2": "2000",
+        "col3": "2000"
+      },
+      {
+        "A. One-time payment at the time of admission": "3.",
+        "col1": "Provisional Certificate",
+        "col2": "500",
+        "col3": "500"
+      },
+      {
+        "A. One-time payment at the time of admission": "4.",
+        "col1": "Alumni Association Subscription",
+        "col2": "1500",
+        "col3": "1500"
+      },
+      {
+        "A. One-time payment at the time of admission": "5.",
+        "col1": "I Card",
+        "col2": "500",
+        "col3": "500"
+      },
+      {
+        "A. One-time payment at the time of admission": "6.",
+        "col1": "Student's Welfare",
+        "col2": "2000",
+        "col3": "2000"
+      },
+      {
+        "A. One-time payment at the time of admission": "7.",
+        "col1": "Caution Money (Refundable)",
+        "col2": "5000",
+        "col3": "5000"
+      },
+      {
+        "A. One-time payment at the time of admission": "Total One Time Fees (A)",
+        "col1": "",
+        "col2": "13,500",
+        "col3": "13,500"
+      }
+    ]
+  },
+  {
+    "id": "fee-phd-2025-p1-t1",
+    "document_id": "fee-phd-2025",
+    "page": 1,
+    "kind": "table",
+    "title": "fee-phd-2025 table (p.1)",
+    "rows": [
+      {
+        "B. Semester Fees (Academic fee) – Per semester": "Sr. No.",
+        "col1": "Head",
+        "col2": "Gen/OBC/EWS",
+        "col3": "SC/ST"
+      },
+      {
+        "B. Semester Fees (Academic fee) – Per semester": "1.",
+        "col1": "Gymkhana Fee",
+        "col2": "3000",
+        "col3": "3000"
+      },
+      {
+        "B. Semester Fees (Academic fee) – Per semester": "2.",
+        "col1": "Examination Fee",
+        "col2": "1000",
+        "col3": "1000"
+      },
+      {
+        "B. Semester Fees (Academic fee) – Per semester": "3.",
+        "col1": "Registration Fee",
+        "col2": "1000",
+        "col3": "1000"
+      },
+      {
+        "B. Semester Fees (Academic fee) – Per semester": "4.",
+        "col1": "Medical Insurance + PHC",
+        "col2": "1500",
+        "col3": "1500"
+      },
+      {
+        "B. Semester Fees (Academic fee) – Per semester": "5.",
+        "col1": "Internet and computer Charge",
+        "col2": "1000",
+        "col3": "1000"
+      },
+      {
+        "B. Semester Fees (Academic fee) – Per semester": "Total Semester Fees (Academic fee) in Rs. (B)",
+        "col1": "",
+        "col2": "7,500",
+        "col3": "7,500"
+      }
+    ]
+  },
+  {
+    "id": "fee-phd-2025-p1-t2",
+    "document_id": "fee-phd-2025",
+    "page": 1,
+    "kind": "table",
+    "title": "fee-phd-2025 table (p.1)",
+    "rows": [
+      {
+        "C. Semester Fees (Tuition fee and hostel fee) – Per semester": "Sr. No.",
+        "col1": "Head",
+        "col2": "Gen/OBC/EWS",
+        "col3": "SC/ST"
+      },
+      {
+        "C. Semester Fees (Tuition fee and hostel fee) – Per semester": "1.",
+        "col1": "Tuition Fee",
+        "col2": "20600",
+        "col3": "NIL"
+      },
+      {
+        "C. Semester Fees (Tuition fee and hostel fee) – Per semester": "2.",
+        "col1": "Hostel Fees#",
+        "col2": "11000",
+        "col3": "11000"
+      },
+      {
+        "C. Semester Fees (Tuition fee and hostel fee) – Per semester": "Total Semester Fees (Tuition fee and hostel fee) in Rs. (C)",
+        "col1": "",
+        "col2": "31,600",
+        "col3": "11,000"
+      }
+    ]
+  },
+  {
+    "id": "fee-phd-2025-p1-t3",
+    "document_id": "fee-phd-2025",
+    "page": 1,
+    "kind": "table",
+    "title": "fee-phd-2025 table (p.1)",
+    "rows": [
+      {
+        "Grand Total (A+B+C) in Rs.": "Sr. No.",
+        "col1": "Category",
+        "col2": "Sem-I",
+        "col3": "Sem-II",
+        "col4": "Sem-III",
+        "col5": "Sem-IV",
+        "col6": "Sem-V",
+        "col7": "Sem-VI",
+        "col8": "Sem-VII",
+        "col9": "Sem-VIII",
+        "col10": "Sem-IX",
+        "col11": "Sem-X"
+      },
+      {
+        "Grand Total (A+B+C) in Rs.": "1.",
+        "col1": "Gen/OBC/EWS",
+        "col2": "52,600",
+        "col3": "39,100",
+        "col4": "39,100",
+        "col5": "39,100",
+        "col6": "39,100",
+        "col7": "39,100",
+        "col8": "39,100",
+        "col9": "39,100",
+        "col10": "39,100",
+        "col11": "39,100"
+      },
+      {
+        "Grand Total (A+B+C) in Rs.": "2.",
+        "col1": "SC / ST",
+        "col2": "32,000",
+        "col3": "18,500",
+        "col4": "18,500",
+        "col5": "18,500",
+        "col6": "18,500",
+        "col7": "18,500",
+        "col8": "18,500",
+        "col9": "18,500",
+        "col10": "18,500",
+        "col11": "18,500"
+      }
+    ]
+  },
+  {
+    "id": "fee-phd-2025-p1-t4",
+    "document_id": "fee-phd-2025",
+    "page": 1,
+    "kind": "table",
+    "title": "fee-phd-2025 table (p.1)",
+    "rows": [
+      {
+        "D. Semester Fees (Mess) – Per semester (Will be as per actual)": "Sr. No.",
+        "col1": "Head",
+        "col2": "Amount in Rs."
+      },
+      {
+        "D. Semester Fees (Mess) – Per semester (Will be as per actual)": "1.",
+        "col1": "Mess Advance (Adjustable as per actual & to be deposited separately at the\ntime of physical reporting)",
+        "col2": "20000"
+      }
+    ]
+  }
+]

@@ -15,15 +15,24 @@ frontend/dist/
 
 data/corpus/pdfs/
 data/corpus/html/
-data/index/
+data/corpus/fetch_log.json
 *.bin
 *.sqlite
+
+# Ship the RAG index for Vercel/Render (embeddings ~22MB)
+# data/index/ is tracked on purpose
 
 .DS_Store
 Thumbs.db
 .idea/
 .vscode/
+front-end/dist/
+frontend/dist/
 
-data/index/
-data/corpus/fetch_log.json
+
+front-end/public/brand/preview/
+front-end/public/brand/_source-*.png
+front-end/public/brand/*-clear.png
+front-end/public/brand/*-paper.png
+front-end/public/brand/*-64f.png
 

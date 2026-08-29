@@ -6,7 +6,20 @@ import json
 from functools import lru_cache
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parents[3]
+def _repo_root() -> Path:
+    """Prefer monorepo root (…/SIHih); fall back to backend/ if data lives there."""
+    here = Path(__file__).resolve()
+    monorepo = here.parents[3]
+    backend = here.parents[2]
+    for root in (monorepo, backend):
+        if (root / "data" / "index" / "chunks.jsonl").exists():
+            return root
+        if (root / "data" / "contradictions.seed.json").exists():
+            return root
+    return monorepo
+
+
+REPO = _repo_root()
 INDEX = REPO / "data" / "index"
 CHUNKS_PATH = INDEX / "chunks.jsonl"
 EMBEDS_PATH = INDEX / "embeddings.jsonl"

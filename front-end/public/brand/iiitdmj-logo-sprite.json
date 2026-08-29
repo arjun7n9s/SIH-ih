@@ -1,0 +1,16 @@
+{
+  "name": "iiitdmj-logo-assemble-32",
+  "src": "/brand/iiitdmj-logo-sprite.png",
+  "frames": 32,
+  "cols": 8,
+  "rows": 4,
+  "frameWidth": 256,
+  "frameHeight": 256,
+  "sheetWidth": 2048,
+  "sheetHeight": 1024,
+  "fps": 24,
+  "durationMs": 1333,
+  "layout": "grid-row-major",
+  "enhanced": "2x LANCZOS + light unsharp; black plate transparent",
+  "source": "user 32-frame sheet 1024x512"
+}

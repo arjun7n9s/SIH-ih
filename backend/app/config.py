@@ -10,8 +10,8 @@ class Settings(BaseSettings):
 
     use_mock: bool = False
     cors_origins: str = (
-        "http://localhost:5173,http://localhost:5174,http://localhost:3000,"
-        "http://127.0.0.1:5173,http://127.0.0.1:5174,http://127.0.0.1:3000"
+        "http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:3000,"
+        "http://127.0.0.1:5173,http://127.0.0.1:5174,http://127.0.0.1:5175,http://127.0.0.1:3000"
     )
 
     aimlapi_key: str = ""
@@ -26,6 +26,11 @@ class Settings(BaseSettings):
 
     speechmatics_api_key: str = ""
     speechmatics_jwt_ttl_seconds: int = 60
+    # Melia-1 = multilingual batch (Hinglish / code-switch). Realtime Melia not shipped yet.
+    speechmatics_batch_model: str = "melia-1"
+    speechmatics_realtime_model: str = "enhanced"
+    speechmatics_realtime_language: str = "en"
+    speechmatics_language_hints: str = "en,hi"
 
     @property
     def bd_token(self) -> str:
