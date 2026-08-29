@@ -48,8 +48,14 @@ function ChatShell() {
 
   useEffect(() => {
     void healthCheck().then((h) => {
-      if (!h) setReadyLabel("Backend offline — start uvicorn on :8000");
-      else if (h.live_chat) setReadyLabel("Live index ready");
+      if (!h) {
+        const local = import.meta.env.DEV;
+        setReadyLabel(
+          local
+            ? "Backend offline — start uvicorn on :8000"
+            : "API unreachable — check the Vercel FastAPI service",
+        );
+      } else if (h.live_chat) setReadyLabel("Live index ready");
       else setReadyLabel("API up · index/mock mode");
     });
   }, []);

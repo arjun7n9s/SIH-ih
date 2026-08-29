@@ -11,10 +11,9 @@
     "backend": {
       "root": "backend",
       "framework": "fastapi",
-      "entrypoint": "app/main.py",
-      "installCommand": "pip install -e . && mkdir -p data/index data/corpus && cp -r ../data/index/. data/index/ && cp -f ../data/contradictions.seed.json data/contradictions.seed.json && cp -f ../data/corpus/manifest.yaml data/corpus/manifest.yaml",
+      "entrypoint": "main:app",
       "functions": {
-        "app/main.py": {
+        "main.py": {
           "maxDuration": 60,
           "memory": 1024
         }

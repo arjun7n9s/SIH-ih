@@ -21,6 +21,7 @@ data/corpus/fetch_log.json
 
 # Ship the RAG index for Vercel/Render (embeddings ~22MB)
 # data/index/ is tracked on purpose
+backend/data/
 
 .DS_Store
 Thumbs.db

@@ -18,7 +18,10 @@ dependencies = [
 ]
 
 [tool.vercel]
-entrypoint = "app/main.py"
+entrypoint = "main:app"
+
+[tool.vercel.scripts]
+build = "python scripts/bundle_index.py"
 
 [project.optional-dependencies]
 dev = ["ruff>=0.7.0"]
