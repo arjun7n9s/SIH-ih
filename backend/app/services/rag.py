@@ -17,21 +17,35 @@ _EXCERPT_CTX = 900
 
 Intent = Literal["fee", "refund", "attendance", "hostel", "about", "general"]
 
-SYSTEM = """You are Suchna, the campus assistant for PDPM IIITDM Jabalpur.
+SYSTEM_RAG = """You are Suchna’s corpus reader for PDPM IIITDM Jabalpur.
 
-Answer every question directly. No preamble.
-Default language is English. Reply in Hindi only when the latest student message
-contains Hindi (Devanagari) script. Hinglish written in English letters → English.
+Answer ONLY from the official passages, fee tables, and faculty directory block.
+Cite as [1], [2] when you use a passage. Be short. No preamble.
+English by default; Hindi only if told to.
+If the files do not contain the fact, say exactly: CORPUS_MISS
+Do not invent fee amounts or faculty emails."""
 
-This is one ongoing chat. Follow-ups like “UG”, “and the phone?”, “what about hostel”
-refer to the earlier messages — do not treat them as a new unrelated question.
+SYSTEM_GEMINI = """You are Suchna’s general campus tutor for PDPM IIITDM Jabalpur (Gemini).
 
-ALWAYS give a useful answer. Never say “no context”, “not in the sources”, “no data”,
-or that you lack the answer.
-If a FACULTY DIRECTORY block is present, use it for names and emails.
-If official passages or a fee table contain the number, use those figures and cite [1], [2].
-Otherwise answer from campus facts and your knowledge.
-If a programme is unnamed for fees, ask UG / PhD / PG first."""
+Answer the student directly from your knowledge plus any campus facts / directory given.
+English by default; Hindi only if told to. No preamble.
+Always give a useful answer. Never say you lack context.
+Do not invent exact current fee circular dates if none were provided."""
+
+SYSTEM_JUDGE = """You are Suchna’s final editor. You see two drafts and the evidence.
+
+Draft A = RAG / official corpus + faculty directory.
+Draft B = Gemini general knowledge.
+
+Write ONE student-facing answer. Do not mention drafts, RAG, Gemini, or that you judged.
+
+Rules:
+- Fees, refunds, attendance, circular dates: prefer A when it has real figures. Never average two different rupee amounts.
+- Faculty email, phone, research: prefer A if it quotes the directory. Use B only to fill a gap A left empty.
+- Director, campus life, how-to, general: prefer B if A is CORPUS_MISS or thin; merge extra true facts from both.
+- Follow-ups refer to earlier chat. English default; Hindi only if the latest message has Devanagari.
+- Never say “no context”, “not in the sources”, or CORPUS_MISS to the student.
+- If a programme is still unnamed for fees, ask UG / PhD / PG."""
 
 
 def index_ready() -> bool:
@@ -343,20 +357,7 @@ def _clarify_fees(query: str, hits: list[dict]) -> dict:
 
 
 def answer(query: str, history: list[dict] | None = None) -> dict:
-    # Direct directory hit — do not send this through a “sources-only” model.
     lookup_q = _blend_query(query, history)
-    if faculty.looks_like_faculty_query(lookup_q) or faculty.looks_like_faculty_query(query):
-        rows = faculty.lookup(lookup_q) or faculty.lookup(query)
-        if rows:
-            return {
-                "text": faculty.format_answer(rows, query),
-                "sources": faculty.source_cards(rows),
-                "structures": [],
-                "freshness": None,
-                "contradiction": None,
-                "mode": "faculty",
-            }
-
     intent = detect_intent(lookup_q)
     prog = fee_program(lookup_q) if intent == "fee" else fee_program(query)
     policy = intent in {"fee", "refund", "attendance", "hostel"}
@@ -365,11 +366,10 @@ def answer(query: str, history: list[dict] | None = None) -> dict:
         return _clarify_fees(query, [])
 
     hits: list[dict] = []
-    if policy:
-        try:
-            hits = retrieve(lookup_q, k=8, intent=intent)
-        except Exception:  # noqa: BLE001
-            hits = []
+    try:
+        hits = retrieve(lookup_q, k=8, intent=intent)
+    except Exception:  # noqa: BLE001
+        hits = []
 
     sources, context_parts = _source_cards(hits)
     doc_ids = [h.get("document_id") for h in hits if h.get("document_id")]
@@ -414,7 +414,15 @@ def answer(query: str, history: list[dict] | None = None) -> dict:
             "mode": "error",
         }
 
-    directory = faculty.directory_prompt()
+    fac_rows = faculty.lookup(lookup_q) or faculty.lookup(query)
+    fac_like = faculty.looks_like_faculty_query(lookup_q) or faculty.looks_like_faculty_query(query)
+    directory = ""
+    if fac_like:
+        directory = (
+            faculty.format_answer(fac_rows, query)
+            if fac_rows
+            else faculty.directory_prompt()
+        )
     table_note = ""
     if structures:
         table_note = "\n\nOfficial fee/refund tables (use these numbers):\n" + str(
@@ -430,36 +438,84 @@ def answer(query: str, history: list[dict] | None = None) -> dict:
         )
 
     lang = "Hindi (Devanagari)" if _is_hindi(query) else "English"
-    user = (
+    shared = (
         f"{_history_block(history)}"
         f"Latest student message: {query}\n"
-        f"Resolved question (use this if the latest line is a follow-up): {lookup_q}\n"
-        f"Reply in {lang} only. Answer the question. Do not say you lack context.\n\n"
-        f"Campus facts:\n{campus_facts.FACTS}\n"
+        f"Resolved question: {lookup_q}\n"
+        f"Reply in {lang} only.\n"
     )
+    evidence = f"Campus facts:\n{campus_facts.FACTS}\n"
     if directory:
-        user += f"\nFACULTY DIRECTORY (authoritative for emails):\n{directory}\n"
+        evidence += f"\nFaculty directory hit:\n{directory}\n"
     if context_parts:
-        user += "\nOfficial passages:\n\n" + "\n\n".join(context_parts)
-    user += table_note
+        evidence += "\nOfficial passages:\n\n" + "\n\n".join(context_parts)
+    evidence += table_note
     if contra_card:
-        user += f"\n\nDisagreement to surface briefly: {contra_card.get('claim')}"
+        evidence += f"\n\nCorpus disagreement: {contra_card.get('claim')}"
 
-    text = aimlapi.chat_completion(
-        SYSTEM,
-        user,
-        temperature=0.25,
-        max_tokens=520,
-        model=settings.aimlapi_chat_model,
+    rag_user = (
+        shared
+        + "\nUse ONLY the evidence below. If it does not answer the question, output CORPUS_MISS.\n\n"
+        + evidence
     )
-    fac_sources = faculty.source_cards(faculty.lookup(query)) if directory and faculty.lookup(query) else []
+    gemini_user = (
+        shared
+        + "\nAnswer helpfully. Evidence below may help; you may also use general knowledge.\n\n"
+        + evidence
+    )
+
+    rag_model = getattr(settings, "aimlapi_grounded_model", None) or "gpt-4o"
+    gemini_model = settings.aimlapi_chat_model
+    judge_model = getattr(settings, "aimlapi_judge_model", None) or "gpt-4o-mini"
+
+    rag_text, gemini_text = aimlapi.complete_parallel(
+        [
+            {
+                "system": SYSTEM_RAG,
+                "user": rag_user,
+                "model": rag_model,
+                "temperature": 0.1,
+                "max_tokens": 420,
+            },
+            {
+                "system": SYSTEM_GEMINI,
+                "user": gemini_user,
+                "model": gemini_model,
+                "temperature": 0.35,
+                "max_tokens": 480,
+            },
+        ]
+    )
+    if fac_rows and (not rag_text or rag_text.strip() == "CORPUS_MISS"):
+        rag_text = faculty.format_answer(fac_rows, query)
+
+    judge_user = (
+        shared
+        + f"\n--- Draft A (RAG / corpus) ---\n{rag_text or '(empty)'}\n"
+        + f"\n--- Draft B (Gemini) ---\n{gemini_text or '(empty)'}\n"
+        + f"\n--- Evidence ---\n{evidence}\n"
+        + "\nWrite the final answer for the student now."
+    )
+    text = aimlapi.chat_completion_safe(
+        SYSTEM_JUDGE,
+        judge_user,
+        temperature=0.15,
+        max_tokens=520,
+        model=judge_model,
+    )
+    if not text:
+        text = rag_text if rag_text and "CORPUS_MISS" not in rag_text else gemini_text
+    if not text:
+        text = "Couldn’t finish that just now — ask once more."
+
+    fac_sources = faculty.source_cards(fac_rows) if fac_rows else []
     return {
         "text": text,
         "sources": sources or fac_sources,
         "structures": structures[:1] if intent == "fee" else structures[:2],
         "freshness": freshness,
         "contradiction": contra_card,
-        "mode": "live",
+        "mode": "ensemble",
     }
 
 

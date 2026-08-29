@@ -32,11 +32,11 @@ def labels_for(query: str) -> list[str]:
     elif any("\u0900" <= ch <= "\u097F" for ch in q):
         first = "Reading Hindi and English circulars…"
     else:
-        first = "Searching campus guidelines…"
+        first = "Asking the corpus and Gemini…"
 
     return [
         first,
-        "Finding the closest official passages…",
-        "Checking whether two documents disagree…",
-        "Writing a clear, short answer…",
+        "Asking Gemini in parallel…",
+        "A third model is comparing both drafts…",
+        "Writing the final answer…",
     ]

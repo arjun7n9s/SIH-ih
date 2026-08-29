@@ -22,10 +22,12 @@ class Settings(BaseSettings):
 
     aimlapi_key: str = ""
     aimlapi_base_url: str = "https://api.aimlapi.com/v1"
-    # Open / clarify answers
+    # Gemini draft (open / general)
     aimlapi_chat_model: str = "gemini-2.5-flash"
-    # Grounded cited answers — stronger instruction-following
+    # RAG draft — stays on official passages
     aimlapi_grounded_model: str = "gpt-4o"
+    # Third model: picks / merges the two drafts
+    aimlapi_judge_model: str = "gpt-4o-mini"
     aimlapi_embed_model: str = "text-embedding-3-large"
 
     bright_data_api_token: str = ""
