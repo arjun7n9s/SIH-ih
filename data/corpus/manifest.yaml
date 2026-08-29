@@ -1,0 +1,216 @@
+# Hand-curated IIITDM Jabalpur corpus.
+# Do not spider the site — homepage/academics return 403 to generic crawlers.
+# fetch_corpus.py must send a browser User-Agent.
+#
+# demo: true  → index first; these power the 4-minute walkthrough
+# demo: false → stretch; skip if the clock is tight
+
+institute: PDPM IIITDM Jabalpur
+source_pages:
+  - https://www.iiitdmj.ac.in/students/hostels.php
+  - https://www.iiitdmj.ac.in/administration/administrative_structure.php
+
+documents:
+  # --- demo-critical ---
+  - id: ug-guidelines-2025
+    title: Academic Guidelines UG (modified Dec 2025)
+    url: https://www.iiitdmj.ac.in/academics/download/Annexure%20II%20_%20Academic%20Guidelines_UG%20modified%20Dec%202025.pdf
+    type: policy
+    effective_from: 2025-12-01
+    last_updated: 2025-12-01
+    lang: en
+    demo: true
+    why: Current attendance / registration / fee-forfeit rules. Pairs with 2017 for contradiction + time.
+
+  - id: ug-pg-guidelines-2017
+    title: Academic Guidelines UG and PG (27 Oct 2017)
+    url: https://www.iiitdmj.ac.in/academics/download/Academic%20Guidelines_271017.pdf
+    type: policy
+    effective_from: 2017-10-27
+    last_updated: 2017-10-27
+    lang: en
+    demo: true
+    why: Older rule set. "What was the rule in 2023?" + contradiction vs 2025.
+
+  - id: refund-2023
+    title: Notification — Revised refund rule
+    url: https://www.iiitdmj.ac.in/downloads/Notification_Revised_refund_rule.pdf
+    type: notification
+    effective_from: 2023-05-15
+    last_updated: 2023-05-15
+    lang: en
+    demo: true
+    why: Structured refund table. Conflicts with FAQ "ask JoSAA" path.
+
+  - id: faq-2025
+    title: FAQ 2025
+    url: https://www.iiitdmj.ac.in/downloads/FAQ%202025.pdf
+    type: faq
+    effective_from: 2025-01-01
+    last_updated: 2025-01-01
+    lang: en
+    demo: true
+    why: Student-voice questions. Refund answer points to JoSAA, not the 2023 notification.
+
+  - id: fee-ug-2024
+    title: Fee structure B.Tech / B.Des 2024-25
+    url: https://www.iiitdmj.ac.in/academics/download/fee-structure-2024-25/UG2024.pdf
+    type: fee-table
+    effective_from: 2024-07-01
+    last_updated: 2024-07-01
+    lang: en
+    demo: true
+    why: Typed table card. Hostel 11000 + tuition 71750.
+
+  - id: fee-phd-2025
+    title: Fee structure PhD 2025-26
+    url: https://www.iiitdmj.ac.in/academics/download/fee-structure-2025-26/Fee%20Structure%202025-2026%20-PhD.pdf
+    type: fee-table
+    effective_from: 2025-07-01
+    last_updated: 2025-07-01
+    lang: en
+    demo: true
+    why: Mess advance 20000 vs UG 15000. Freshness + table.
+
+  - id: phd-manual-2022
+    title: Ph.D. Manual (July 2022)
+    url: https://www.iiitdmj.ac.in/academics/download/Ph.D.%20Manual.pdf
+    type: policy
+    effective_from: 2022-07-01
+    last_updated: 2022-07-01
+    lang: en
+    demo: true
+    why: Residence, IPR filing, leave. Overlaps ordinances.
+
+  - id: code-of-conduct
+    title: Code of Conduct
+    url: https://www.iiitdmj.ac.in/students/downloads/Imp_Info/CODE%20OF%20CONDUCT.pdf
+    type: hostel
+    effective_from: null
+    last_updated: null
+    lang: en
+    demo: true
+    why: Hostel / discipline questions in the walkthrough.
+
+  # --- html (not a PDF) ---
+  - id: hostels-html
+    title: Hostels @ IIITDM Jabalpur
+    url: https://www.iiitdmj.ac.in/students/hostels.php
+    type: html
+    effective_from: 2023-08-24
+    last_updated: 2023-08-24
+    lang: en
+    demo: true
+    why: Hostel names (Vasishtha, Aryabhatta, Vivekananda, Panini, Maa Saraswati, Nagarjuna) and wardens. Not in PDFs.
+
+  # --- stretch ---
+  - id: fee-pg-2024
+    title: Fee structure M.Tech / M.Des 2024-25
+    url: https://www.iiitdmj.ac.in/academics/download/fee-structure-2024-25/PG2024.pdf
+    type: fee-table
+    effective_from: 2024-07-01
+    last_updated: 2024-07-01
+    lang: en
+    demo: false
+
+  - id: fee-integrated-2024
+    title: Fee structure Integrated (M+P) 2024-25
+    url: https://www.iiitdmj.ac.in/academics/download/fee-structure-2024-25/Integrated%20(M+P)%202024.pdf
+    type: fee-table
+    effective_from: 2024-07-01
+    last_updated: 2024-07-01
+    lang: en
+    demo: false
+
+  - id: ordinances
+    title: Ordinances of PDPM-IIITDM Jabalpur
+    url: https://www.iiitdmj.ac.in/administration/downloads/Ordinances%20of%20PDPM-IIITDM%20Jabalpur.pdf
+    type: legal
+    effective_from: null
+    last_updated: null
+    lang: en
+    demo: false
+
+  - id: iiit-act-2014
+    title: IIIT Act 30 of 2014
+    url: https://www.iiitdmj.ac.in/downloads/IIIT%20Act%2030_of_2014.pdf
+    type: legal
+    effective_from: 2014-01-01
+    last_updated: 2014-01-01
+    lang: en
+    demo: false
+
+  - id: statutes-gazette
+    title: Statutes of IIITDM Jabalpur (Gazette)
+    url: https://www.iiitdmj.ac.in/downloads/The%20Gazette%20publication%20of%20Statutes%20of%20IIITDM%20Jabalpur.pdf
+    type: legal
+    effective_from: null
+    last_updated: null
+    lang: en
+    demo: false
+
+  - id: ipr-2020
+    title: IPR Policy Final V1 (16 Jun 2020)
+    url: https://www.iiitdmj.ac.in/downloads/IPR%20Policy%20Final%20V1%2016_6_2020.pdf
+    type: policy
+    effective_from: 2020-06-16
+    last_updated: 2020-06-16
+    lang: en
+    demo: false
+
+  - id: timetable-guide
+    title: Guidelines for Timetable
+    url: https://www.iiitdmj.ac.in/downloads/Guidelines%20for%20Timetable.pdf
+    type: academic
+    effective_from: 2024-01-01
+    last_updated: 2024-01-01
+    lang: en
+    demo: false
+
+  - id: banking
+    title: Banking Facilities in PDPM
+    url: https://www.iiitdmj.ac.in/downloads/Banking%20Facilities%20in%20PDPM.pdf
+    type: student-life
+    effective_from: null
+    last_updated: null
+    lang: en
+    demo: false
+
+  - id: gate-guidelines
+    title: Guidelines for Entry, Exit at Main Gate
+    url: https://www.iiitdmj.ac.in/students/downloads/Imp_Info/Guidelines%20for%20Entry,%20Exit%20at%20Main%20Gate.pdf
+    type: hostel
+    effective_from: null
+    last_updated: null
+    lang: en
+    demo: false
+
+  - id: unauthorized-conduct
+    title: Unauthorized Conduct in the Campus
+    url: https://www.iiitdmj.ac.in/students/downloads/Imp_Info/Unauthorized%20Conduct%20in%20the%20Campus.pdf
+    type: hostel
+    effective_from: null
+    last_updated: null
+    lang: en
+    demo: false
+
+skip:
+  - hostel allotment PDFs (batch/roll lists)
+  - taxi services
+  - recruitment advertisements
+  - telephone directory
+  - closed / restricted holiday lists unless a demo question needs them
+
+seed_contradictions:
+  - claim: Fee refund on withdrawal
+    doc_a: refund-2023
+    doc_b: faq-2025
+    note: Notification has rupee slabs; FAQ says contact JoSAA/CSAB.
+  - claim: Which academic rules bind current UG students
+    doc_a: ug-guidelines-2025
+    doc_b: ug-pg-guidelines-2017
+    note: 2025 text says it supersedes earlier guidelines; 2017 still published.
+  - claim: Hostel / mess charges
+    doc_a: fee-ug-2024
+    doc_b: fee-phd-2025
+    note: Mess advance 15000 vs 20000; use as freshness, not a true conflict, unless hostel fee line differs.

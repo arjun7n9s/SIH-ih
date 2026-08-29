@@ -1,0 +1,41 @@
+# Render Blueprint — fuse pattern from Waqar-743/RAG_Chatbot
+services:
+  - type: web
+    name: suchna-api
+    runtime: python
+    plan: starter
+    rootDir: backend
+    buildCommand: pip install -e .
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: USE_MOCK
+        value: "0"
+      - key: AIMLAPI_KEY
+        sync: false
+      - key: AIMLAPI_BASE_URL
+        value: https://api.aimlapi.com/v1
+      - key: AIMLAPI_CHAT_MODEL
+        value: gpt-4o-mini
+      - key: AIMLAPI_EMBED_MODEL
+        value: text-embedding-3-large
+      - key: BRIGHT_DATA_API_TOKEN
+        sync: false
+      - key: BRIGHT_DATA_UNLOCKER_ZONE
+        sync: false
+      - key: SPEECHMATICS_API_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+
+  - type: web
+    name: suchna-web
+    runtime: static
+    plan: starter
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false
+      - key: VITE_USE_MOCK
+        value: "0"

@@ -5,6 +5,58 @@
 
 ---
 
+## 0. Rapid-build override (read this first)
+
+This is a **fuse, don't invent** build. UI ships first with mock answers. Backend is a thin RAG pipe glued from existing OpenAI-compatible clients. We do **not** stand up TEI, train a conflict model, or write chat primitives.
+
+**Priority order**
+
+1. Screens that look like a finished product (chat + citations + source panel + contradiction card).
+2. Real IIITDMJ PDFs behind those screens.
+3. Voice and companion only after the four-minute demo already works on typed queries.
+
+**Do not build**
+
+- HuggingFace TEI / `e5-large` Docker on Render (too heavy for Starter RAM).
+- Custom Speechmatics websocket from scratch.
+- Index-time all-pairs contradiction scan.
+- SQLite + pgvector shim. Local = Chroma. Prod = pgvector if time, else ship Chroma file.
+- Auth, history, admin, TTS, multi-college.
+
+**Fuse map (steal these, don't rewrite)**
+
+| What we need | Reuse as | Why |
+|---|---|---|
+| Chat chrome, streaming, input, suggestions | [Vercel AI Elements](https://github.com/vercel/ai-elements) via `npx shadcn@latest add` — `conversation`, `message`, `prompt-input`, `sources`, `inline-citation`, `suggestion`, `loader` | Official shadcn AI primitives. Hours, not days. |
+| Citation → slide-in PDF page | Interaction from [AviralJ58/ai-search-engine](https://github.com/AviralJ58/ai-search-engine) + [ysocrius/ai-citation-chat](https://github.com/ysocrius/ai-citation-chat) | Perplexity-style click `[1]` → highlighted page. Copy the pattern, not the Next.js repo. |
+| FastAPI + Vite + Render Blueprint skeleton | [Waqar-743/RAG_Chatbot](https://github.com/Waqar-743/RAG_Chatbot) `render.yaml` + CORS + `VITE_API_URL` | Same host we already locked. |
+| RAG loop (chunk, retrieve, SSE, citations) | [Utkarsh272/rag-grounded](https://github.com/Utkarsh272/rag-grounded) + [ImOmkar/pdf-chatbot](https://github.com/ImOmkar/pdf-chatbot) | SSE event shape + page-level citations. Swap LLM/embeddings to AIMLAPI. |
+| Contradiction surfacing | Query-time judge from [nandrzej/vs_rag](https://github.com/nandrzej/vs_rag) + [cervantes79/contrachecker](https://github.com/cervantes79/contrachecker). Demo pairs pre-seeded. | No ConflictRAG training. LLM says "do these two chunks disagree?" |
+| Tables | `pdfplumber` table extract at index time → `StructuredCard` | Indian fee PDFs are the demo. |
+| Voice | Official [`@speechmatics/real-time-client-react`](https://www.npmjs.com/package/@speechmatics/real-time-client-react) + [`@speechmatics/browser-audio-input-react`](https://github.com/speechmatics/speechmatics-js-sdk) | Mic in the browser. Backend only mints a JWT. |
+| Generation + embeddings | OpenAI SDK pointed at `https://api.aimlapi.com/v1` | AIMLAPI is OpenAI-compatible. Zero custom client. |
+| Hindi / Hinglish | Query rewrite: detect non-English → English retrieval query; answer in user language | Skips e5-large. Good enough for demo. |
+| Scrape past WAF | **Bright Data Web Unlocker** (`POST /request`, markdown) — port of Tingle `bd/unlocker.ts`. Free path: `curl_cffi` Chrome impersonation first. | **Do not** reuse Tingle Scraper Studio (`TINGLE_C_*` / `/dca/trigger`). Those CSS extractors are the broken path. |
+
+**UI reference (Mobbin paid plan blocked this session)**
+
+Steal layout from public Perplexity web: empty-state search, answer column, source rail, hover citation. Composer from ChatGPT: textarea + mic on the right. Brand: IIITDMJ-adjacent ink + cream, not generic purple SaaS.
+
+**Clock (critical path, ~14h). Cut from the bottom.**
+
+| Block | Hours | Done when |
+|---|---:|---|
+| A. UI shell + mock demo script | 4 | All 6 demo beats play with fixture JSON. No backend. |
+| B. Corpus download + index | 3 | `manifest.yaml` PDFs on disk; Chroma has ≥300 chunks; fee tables extracted. |
+| C. Wire chat SSE | 3 | Typed question hits real RAG; `[1]` opens source panel. |
+| D. Contradiction + freshness | 2 | Refund / 2017-vs-2025 guidelines show side-by-side card + date badge. |
+| E. Voice | 1.5 | Official Speechmatics React SDK fills the input box. |
+| F. Companion + deploy | 1.5 | PromptInput attachment → ephemeral summary; Render live. |
+
+Section 8's 22-hour plan is the long version. If the clock slips, drop E then F. Never drop A.
+
+---
+
 ## 1. Problem statement (track 2)
 
 > Build a retrieval-based question-answering system that responds to student queries using a defined set of college or institutional documents and provides relevant source references.
@@ -335,13 +387,164 @@ Stored in `docs/DEMO_SCRIPT.md` after Phase 9. Plan:
 
 ## 15. Next concrete step
 
-Phase 0:
-1. Run `git init` in `C:\Users\arjun\Desktop\SIHih`.
-2. Write `render.yaml`, `backend/pyproject.toml`, `frontend/package.json`, `.env.example`, `README.md`.
-3. Confirm `uvicorn app.main:app --reload` boots.
-4. Confirm `render.yaml` parses in Render Blueprint preview.
+Phase 0 is git + this plan (done). Next is **Block A: UI shell with mock fixtures**, then corpus fetch from `data/corpus/manifest.yaml`.
 
-After Phase 0 is green, we move to Phase 1 (fetch the 10 IIITDMJ PDFs and index them).
+Do not start TEI, pgvector, or Speechmatics until the mock demo script plays end-to-end.
+
+---
+
+## 16. Tool structure (screens + data, not folders)
+
+One product. Two routes. Chat is the whole demo.
+
+```
+/                         ← Suchna
+  ┌─────────────────────────────────────────────────────────────┐
+  │  wordmark + "IIITDM Jabalpur"     [Contradictions] [EN|HI]  │
+  ├──────────────────────────┬──────────────────────────────────┤
+  │  ANSWER COLUMN           │  EVIDENCE RAIL (empty until cite)│
+  │  - query as title        │  - source cards [1] [2] [3]      │
+  │  - freshness badge       │  - click → chunk + page preview  │
+  │  - streaming markdown    │  - PDF slide-over (page jump)    │
+  │  - inline [1] hover      │                                  │
+  │  - StructuredCard (fees) │                                  │
+  │  - ContradictionCard     │                                  │
+  │  - follow-up chips       │                                  │
+  ├──────────────────────────┴──────────────────────────────────┤
+  │  PromptInput  [paperclip companion]  [mic Speechmatics] [→] │
+  └─────────────────────────────────────────────────────────────┘
+
+/contradictions           ← precomputed demo pairs, same cards
+```
+
+**Empty state:** oversized search, 4 suggestion chips that *are* the demo script ("Attendance policy", "वापसी का नियम?", "Hostel fee", "Rule in 2023"). Tapping a chip is the demo. Do not make users invent a query.
+
+**Companion** is not a page. Paperclip on the composer → ephemeral session banner "this upload is not saved" → summary + due / open questions in the same answer column.
+
+**Voice** is not a page. Mic uses Speechmatics React SDK; partial transcript overlays the input; on final, same `/api/chat` as typed text.
+
+**Answer payload (one JSON shape, mock and live identical)**
+
+```ts
+type ChatEvent =
+  | { type: "status"; label: string }             // "Searching ordinances…"
+  | { type: "token"; text: string }
+  | { type: "sources"; items: Source[] }          // fills the rail
+  | { type: "structure"; kind: "table" | "deadline" | "fee"; payload: object }
+  | { type: "contradiction"; a: Source; b: Source; claim: string }
+  | { type: "freshness"; asOf: string; lastUpdated: string }
+  | { type: "done" }
+```
+
+Mock fixtures live in `frontend/src/fixtures/demo.ts` and implement the 4-minute script with zero network. Backend later emits the same events over SSE.
+
+**Frontend modules (keep tiny)**
+
+- `pages/Home.tsx` — layout above
+- `pages/Contradictions.tsx` — list of `ContradictionCard`
+- `components/ChatPane.tsx` — AI Elements Conversation + Message
+- `components/EvidenceRail.tsx` — Sources
+- `components/StructuredCard.tsx`
+- `components/ContradictionCard.tsx`
+- `components/FreshnessBadge.tsx`
+- `components/VoiceButton.tsx` — Speechmatics hooks only
+- `lib/api.ts` — SSE client; `USE_MOCK=1` reads fixtures
+- `lib/types.ts` — `ChatEvent` etc.
+
+**Backend modules (keep tiny)**
+
+- `routers/chat.py` — retrieve → optional conflict judge → stream
+- `routers/voice_jwt.py` — Speechmatics ephemeral token only
+- `routers/companion.py` — in-memory, 10 min TTL
+- `routers/contradictions.py` — read precomputed JSON
+- `services/rag.py` — Chroma + AIMLAPI
+- `services/conflict.py` — vs_rag-style pair judge
+- `scripts/fetch_corpus.py` — download `manifest.yaml`
+- `scripts/index_corpus.py` — pymupdf/pdfplumber → chunks + tables
+
+No LangChain graphs. Direct OpenAI client + Chroma.
+
+---
+
+## 17. College corpus — gather plan
+
+The homepage and `/academics/` return **403** to naive HTTP clients. **We do scrape** — just not with a dumb spider and not with Tingle Scraper Studio.
+
+Fetch ladder (`backend/app/services/fetch.py` + `scripts/fetch_corpus.py`):
+
+1. Hand-curated `data/corpus/manifest.yaml` (demo docs first).
+2. `curl_cffi` Chrome TLS impersonation (free) for PDFs / soft pages.
+3. Bright Data **Web Unlocker** when the WAF 403s (same pattern as Tingle `unlocker.ts`).
+4. Optional `--discover` walks PDF links out of scraped HTML (host allowlist `iiitdmj.ac.in`, skip allotment/recruitment).
+
+Pages that already serve HTML without Unlocker: `/students/hostels.php`, `/administration/administrative_structure.php`.
+
+### Student question buckets → documents
+
+| Student actually asks | Source type | Manifest ids |
+|---|---|---|
+| Attendance, registration, CPI, unfair means | Academic guidelines (new + old) | `ug-guidelines-2025`, `ug-pg-guidelines-2017` |
+| Withdrawal / refund | Refund notification + FAQ | `refund-2023`, `faq-2025` |
+| "How much do I pay?" | Fee PDFs (tables) | `fee-ug-2024`, `fee-pg-2024`, `fee-phd-2025` |
+| Hostel names, mess, code of conduct | Hostel page HTML + PDFs | `hostels-html`, `code-of-conduct`, `gate-guidelines` |
+| PhD rules, IPR | Manuals | `phd-manual-2022`, `ipr-2020` |
+| Legal / "can senate override" | Act + statutes + ordinances | `iiit-act-2014`, `statutes-gazette`, `ordinances` |
+| Timetable reading | Timetable guide | `timetable-guide` |
+| Bank / caution money | Banking facilities | `banking` |
+
+Old vs new **on purpose** so the contradiction card is real: 2017 guidelines vs Dec 2025 UG guidelines; refund notification vs FAQ ("contact JoSAA"); fee 2024 vs fee 2025 hostel/mess amounts.
+
+### Fetch method
+
+1. Commit `data/corpus/manifest.yaml` (checked in). PDFs gitignored.
+2. `python backend/scripts/fetch_corpus.py` downloads with a browser User-Agent (the site 403s default Python-urllib).
+3. Scrape `hostels.php` to `data/corpus/html/hostels.md` (names, wardens, mess — students ask this and it is not in a PDF).
+4. After download, `index_corpus.py` writes `data/index/` (Chroma + `tables.json` + `docs.json` with `effective_from`).
+5. Manually seed `data/contradictions.seed.json` with 2–3 known pairs for the demo. Query-time judge can add more; the seed guarantees the walkthrough.
+
+### Manifest (verified URLs, Aug 2026)
+
+See `data/corpus/manifest.yaml`. Demo-critical set is tagged `demo: true` (index these first). Stretch set is everything else on that file.
+
+**Do not ingest:** hostel allotment lists (PII-ish roll batches), taxi PDF, recruitment ads, telephone directory, holiday lists unless a demo question needs them.
+
+### Metadata we attach at fetch time
+
+```yaml
+id: ug-guidelines-2025
+title: Academic Guidelines UG (modified Dec 2025)
+url: https://www.iiitdmj.ac.in/academics/download/Annexure%20II%20_%20Academic%20Guidelines_UG%20modified%20Dec%202025.pdf
+type: policy
+effective_from: 2025-12-01
+last_updated: 2025-12-01
+lang: en
+demo: true
+```
+
+`effective_from` is hand-set from the filename / first page. That is the time-aware feature. No NLP date parser in v1.
+
+---
+
+## 18. Revised locked decisions (rapid)
+
+These override §13 where they conflict:
+
+- **Embeddings:** AIMLAPI `text-embedding-3-large` (or `3-small` if Hindi rewrite is on). No TEI in the 2-day build.
+- **Multilingual:** LLM query-translate + answer-in-user-language. Revisit e5 only if Hindi retrieval fails 3 sample questions.
+- **Vector store (demo):** Chroma persisted under `data/index/`. Postgres+pgvector only if Render Blueprint is free time at the end.
+- **Conflicts:** query-time LLM judge + 2–3 seeded pairs. No index-time Cartesian product.
+- **Voice:** Speechmatics **browser** Realtime SDK. FastAPI does not receive audio.
+- **Frontend:** still React + Vite + Tailwind + shadcn, but primitives come from AI Elements, not hand-rolled bubbles.
+
+---
+
+## 19. Block A checklist (start here)
+
+1. Scaffold `frontend/` (Vite React TS) + shadcn init + AI Elements listed in §0.
+2. Build the Home layout in §16 with cream/ink theme.
+3. Write `frontend/src/fixtures/demo.ts` covering: attendance, Hindi refund, fee table, hostel contradiction, "rule in 2023", companion upload.
+4. `USE_MOCK=1` plays the 4-minute script.
+5. Only then run `fetch_corpus.py`.
 
 ## Sources
 
@@ -365,3 +568,15 @@ After Phase 0 is green, we move to Phase 1 (fetch the 10 IIITDMJ PDFs and index 
 [18] https://huggingface.co/spaces/mteb/leaderboard
 [19] https://www.iiitdmj.ac.in
 [20] https://docs.sentence-transformers.com/en/sentence_transformer/pretrained_models.html
+[21] https://github.com/vercel/ai-elements
+[22] https://github.com/AviralJ58/ai-search-engine
+[23] https://github.com/ysocrius/ai-citation-chat
+[24] https://github.com/Waqar-743/RAG_Chatbot
+[25] https://github.com/Utkarsh272/rag-grounded
+[26] https://github.com/ImOmkar/pdf-chatbot
+[27] https://github.com/nandrzej/vs_rag
+[28] https://github.com/cervantes79/contrachecker
+[29] https://docs.aimlapi.com/readme-1
+[30] https://github.com/speechmatics/speechmatics-js-sdk
+[31] https://www.iiitdmj.ac.in/students/hostels.php
+[32] https://www.iiitdmj.ac.in/academics/download/fee-structure-2024-25/UG2024.pdf

@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --color-paper: #f3e9d8;
+  --color-ink: #111111;
+  --color-poster: #f04e2e;
+  --color-rule: #111111;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
+}
+
+button,
+a,
+[role="button"] {
+  cursor: pointer;
+}
+
+.stamp {
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  border: 2px solid var(--color-ink);
+  box-shadow: 7px 7px 0 var(--color-poster);
+  transition: transform 80ms ease, box-shadow 80ms ease, background 80ms ease;
+}
+
+.stamp:hover {
+  background: var(--color-poster);
+  color: var(--color-ink);
+  transform: translate(3px, 3px);
+  box-shadow: 4px 4px 0 var(--color-ink);
+}
+
+.stamp:active {
+  transform: translate(7px, 7px);
+  box-shadow: 0 0 0 var(--color-poster);
+}
+
+.chip {
+  border: 2px solid var(--color-ink);
+  background: transparent;
+  color: var(--color-ink);
+  font-size: 0.875rem;
+  padding: 0.5rem 0.85rem;
+}
+
+.chip:hover {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
