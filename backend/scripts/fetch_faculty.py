@@ -38,10 +38,10 @@ BROWSER_UA = (
 
 CARD_RE = re.compile(
     r"<h4>([^<]{3,90})</h4>\s*"
-    r"<p[^>]*>([^<]{0,120})</p>\s*"
-    r"<h4[^>]*>\s*<small>([^<]*)</small>"
-    r"[\s\S]{0,500}?"
-    r"""href=["']([^"']*?/faculty/([a-zA-Z0-9._-]+))["']""",
+    r"<p[^>]*>([^<]{0,160})</p>\s*"
+    r"<h4[^>]*>\s*<small>([^<]*)</small>\s*</h4>\s*"
+    r"(?:<p[^>]*>([^<]{0,240})</p>\s*)?"
+    r"""[\s\S]{0,220}?href=["']([^"']*?/faculty/([a-zA-Z0-9._-]+))["']""",
     re.I,
 )
 
@@ -66,18 +66,23 @@ def _clean(s: str) -> str:
 
 def _parse_home(html: str) -> dict[str, dict]:
     out: dict[str, dict] = {}
-    for name, dept, designation, href, slug in CARD_RE.findall(html):
+    for name, dept, designation, research, href, slug in CARD_RE.findall(html):
         slug = slug.lower()
         url = urljoin(HOME, href)
-        out[slug] = {
+        row = {
             "name": _clean(name),
             "email": None,
             "phone": None,
             "department": _clean(dept) or None,
             "designation": _clean(designation) or None,
+            "research": _clean(research) or None,
             "profile_url": url,
             "slug": slug,
         }
+        prev = out.get(slug)
+        if prev and prev.get("research") and not row["research"]:
+            row["research"] = prev["research"]
+        out[slug] = row
     return out
 
 
@@ -194,6 +199,7 @@ def main() -> int:
             "phone": phone_map.get(email),
             "department": None,
             "designation": None,
+            "research": None,
             "profile_url": urljoin(HOME, f"/faculty/{local}"),
             "slug": local,
         }

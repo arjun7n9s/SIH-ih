@@ -7,7 +7,8 @@
       "department": "Computer Science & Engineering",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/drakshay",
-      "slug": "drakshay"
+      "slug": "drakshay",
+      "research": "WebGIS, Deep Learning, Agriculture, Unmanned Aerial Systems Engineering, Remote Sensing"
     },
     {
       "name": "Amaresh Chandra Mishra",
@@ -16,7 +17,8 @@
       "department": "Physics",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/amresh",
-      "slug": "amresh"
+      "slug": "amresh",
+      "research": "Magnetic thin films, Magnetoimpedance"
     },
     {
       "name": "Amarnath M.",
@@ -25,7 +27,8 @@
       "department": "Mechanical Engineering",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/amarnath",
-      "slug": "amarnath"
+      "slug": "amarnath",
+      "research": "Condition Monitoring and Fault Detection in Rotat"
     },
     {
       "name": "Amit Vishwakarma",
@@ -34,7 +37,8 @@
       "department": "Electronics & Communications Engineering",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/amitv",
-      "slug": "amitv"
+      "slug": "amitv",
+      "research": "Signal Processing & Image Processing, ML"
     },
     {
       "name": "Amrita Bhattacharjee",
@@ -43,7 +47,8 @@
       "department": "Design Discipline",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/amrita",
-      "slug": "amrita"
+      "slug": "amrita",
+      "research": "Lighting Design, Visual Perception, Design Thinking"
     },
     {
       "name": "Anil Kumar",
@@ -52,7 +57,8 @@
       "department": "Electronics & Communications Engineering",
       "designation": "Associate Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/anilk",
-      "slug": "anilk"
+      "slug": "anilk",
+      "research": "Multirate Signal Processing"
     },
     {
       "name": "Aparajita Ojha",
@@ -61,7 +67,8 @@
       "department": "Computer Science & Engineering",
       "designation": "Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/aojha",
-      "slug": "aojha"
+      "slug": "aojha",
+      "research": "Machine /Deep Learning, Computer Vision"
     },
     {
       "name": "Ashish Parihar",
@@ -79,7 +86,8 @@
       "department": "Physics",
       "designation": "Associate Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/asish.kundu",
-      "slug": "asish.kundu"
+      "slug": "asish.kundu",
+      "research": "Magnetic & Multiferroic Materials"
     },
     {
       "name": "Atul Gupta",
@@ -88,7 +96,8 @@
       "department": "Computer Science & Engineering",
       "designation": "Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/atul",
-      "slug": "atul"
+      "slug": "atul",
+      "research": "Software Engineering, Machine learning,"
     },
     {
       "name": "Atul Kumar",
@@ -106,7 +115,8 @@
       "department": "Mechanical Engineering",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/avinash.raviraja",
-      "slug": "avinash.raviraja"
+      "slug": "avinash.raviraja",
+      "research": "Friction stir welding, Barkhausen Noise Analysis, Materials characterization, Metal matrix Composite, Welding Technology"
     },
     {
       "name": "Ayan Seal",
@@ -133,7 +143,8 @@
       "department": "Mathematics",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/bhupen",
-      "slug": "bhupen"
+      "slug": "bhupen",
+      "research": "Random Network, Computer Vision"
     },
     {
       "name": "Deepmala",
@@ -142,7 +153,8 @@
       "department": "Mathematics",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/deepmala",
-      "slug": "deepmala"
+      "slug": "deepmala",
+      "research": "Optimization Theory and Applications"
     },
     {
       "name": "Dinesh Kumar V",
@@ -151,7 +163,8 @@
       "department": "Electronics & Communications Engineering",
       "designation": "Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/dineshk",
-      "slug": "dineshk"
+      "slug": "dineshk",
+      "research": "Electromagnetics, Antennas, Optical Comm"
     },
     {
       "name": "Dip Prakash Samajdar",
@@ -160,7 +173,8 @@
       "department": "Electronics & Communications Engineering",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/dip.samajdar",
-      "slug": "dip.samajdar"
+      "slug": "dip.samajdar",
+      "research": "VLSI and Optoelectronics"
     },
     {
       "name": "Durgesh Singh",
@@ -169,7 +183,8 @@
       "department": "Computer Science & Engineering",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/durgesh",
-      "slug": "durgesh"
+      "slug": "durgesh",
+      "research": "Image Processing, Digital Watermarking, and Machine Learning"
     },
     {
       "name": "Ece",
@@ -196,7 +211,8 @@
       "department": "Mechanical Engineering",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/gowtham",
-      "slug": "gowtham"
+      "slug": "gowtham",
+      "research": "Machining, Surface Engineering, Tribology, Corrosion"
     },
     {
       "name": "H. Chelladurai",
@@ -205,7 +221,8 @@
       "department": "Mechanical Engineering",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/chella",
-      "slug": "chella"
+      "slug": "chella",
+      "research": "Condition Monitoring, Virtual Instrumentation and Artificial Neural Networks"
     },
     {
       "name": "Himansu Sekhar Nanda",
@@ -214,7 +231,8 @@
       "department": "Mechanical Engineering",
       "designation": "Assistant Professor Grade 1",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/himansu",
-      "slug": "himansu"
+      "slug": "himansu",
+      "research": "Biomaterials and Biomanufacturing"
     },
     {
       "name": "Irshad",
@@ -241,7 +259,8 @@
       "department": "Mechanical Engineering",
       "designation": "DST Inspire Faculty",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/jtiwari",
-      "slug": "jtiwari"
+      "slug": "jtiwari",
+      "research": "Structure property correlation of additively manufactured alloys and composites"
     },
     {
       "name": "Koushik Dutta",
@@ -250,7 +269,8 @@
       "department": "Electronics & Communications Engineering",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/koushikdutta",
-      "slug": "koushikdutta"
+      "slug": "koushikdutta",
+      "research": "Metal Oxide Based Gas Sensors"
     },
     {
       "name": "Lokendra Kumar Balyan",
@@ -259,7 +279,8 @@
       "department": "Mathematics",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/balyan",
-      "slug": "balyan"
+      "slug": "balyan",
+      "research": "Computational Methods for PDEs, Numerical Analysis, Spectral Methods"
     },
     {
       "name": "M. Zahid Ansari",
@@ -268,7 +289,8 @@
       "department": "Mechanical Engineering",
       "designation": "Associate Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/zahid",
-      "slug": "zahid"
+      "slug": "zahid",
+      "research": "MEMS, Smart Materials, Composites"
     },
     {
       "name": "Mamta Anand",
@@ -286,7 +308,8 @@
       "department": "Computer Science & Engineering",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/mkbajpai",
-      "slug": "mkbajpai"
+      "slug": "mkbajpai",
+      "research": "(On Lien)"
     },
     {
       "name": "Manish Kumar Thakur",
@@ -295,7 +318,8 @@
       "department": "Mechanical Engineering",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/manishthakur",
-      "slug": "manishthakur"
+      "slug": "manishthakur",
+      "research": "Rheology, Tribology, Sensors and Actuators, Intelligent materials, Thermofluids, Computational fluid dynamics"
     },
     {
       "name": "Manoj Kumar Panda",
@@ -304,7 +328,8 @@
       "department": "Mathematics (NS)",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/mkpanda",
-      "slug": "mkpanda"
+      "slug": "mkpanda",
+      "research": "APPLIED PDEs"
     },
     {
       "name": "Manu",
@@ -322,7 +347,8 @@
       "department": "Electronics & Communications Engineering",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/mbansal",
-      "slug": "mbansal"
+      "slug": "mbansal",
+      "research": "Wireless Communication"
     },
     {
       "name": "Mparihar",
@@ -340,7 +366,8 @@
       "department": "Physics",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/mkroy",
-      "slug": "mkroy"
+      "slug": "mkroy",
+      "research": "Formation and characterization of magnetic nano particles"
     },
     {
       "name": "Navjeet",
@@ -358,7 +385,8 @@
       "department": "Physics",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/neeraj",
-      "slug": "neeraj"
+      "slug": "neeraj",
+      "research": "(On Lien)"
     },
     {
       "name": "Nihar Kumar Mahato",
@@ -367,7 +395,8 @@
       "department": "Mathematics",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/nihar",
-      "slug": "nihar"
+      "slug": "nihar",
+      "research": "Applied Functional Analys & Optimization"
     },
     {
       "name": "Nihar Ranjan Jena",
@@ -376,7 +405,8 @@
       "department": "Physics",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/nrjena",
-      "slug": "nrjena"
+      "slug": "nrjena",
+      "research": "Computational Biophysics"
     },
     {
       "name": "Nitish Andola",
@@ -385,7 +415,8 @@
       "department": "Computer Science & Engineering",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/nitish.andola",
-      "slug": "nitish.andola"
+      "slug": "nitish.andola",
+      "research": "Cryptography, Cyber Security, Blockchain"
     },
     {
       "name": "Pankaj Sharma",
@@ -412,7 +443,8 @@
       "department": "Mechanical Engineering",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/kponappa",
-      "slug": "kponappa"
+      "slug": "kponappa",
+      "research": "Composite Materials, Biomaterials, Machining, Additive Manufacturing"
     },
     {
       "name": "Prabin Kumar Padhy",
@@ -421,7 +453,8 @@
       "department": "Electronics & Communications Engineering",
       "designation": "Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/prabin16",
-      "slug": "prabin16"
+      "slug": "prabin16",
+      "research": "Automatic Controller Tuning, Identification and Control of Processes"
     },
     {
       "name": "Prabir Mukhopadhyay",
@@ -430,7 +463,8 @@
       "department": "Design Discipline",
       "designation": "Associate Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/prabir",
-      "slug": "prabir"
+      "slug": "prabir",
+      "research": "Injury Prediction, Industrial Ergonomics, Occupational Ergonomics, Ergonomics in Improving Productivity"
     },
     {
       "name": "Prashant K. Jain",
@@ -439,7 +473,8 @@
       "department": "Mechanical Engineering",
       "designation": "Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/pkjain",
-      "slug": "pkjain"
+      "slug": "pkjain",
+      "research": "(on Deputation)"
     },
     {
       "name": "Pritee Khanna",
@@ -448,7 +483,8 @@
       "department": "Computer Science & Engineering",
       "designation": "Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/pkhanna",
-      "slug": "pkhanna"
+      "slug": "pkhanna",
+      "research": "Biometrics, Image and Semantic Retrieval, Gesture Recognition etc."
     },
     {
       "name": "Puneet Tandon",
@@ -457,7 +493,8 @@
       "department": "Mechanical Engineering & Design",
       "designation": "Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/ptandon",
-      "slug": "ptandon"
+      "slug": "ptandon",
+      "research": "Digital Design & Manufacturing"
     },
     {
       "name": "Pushpa Raikwal",
@@ -466,7 +503,8 @@
       "department": "Electronics & Communications Engineering",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/praikwal",
-      "slug": "praikwal"
+      "slug": "praikwal",
+      "research": "Memory Design, VLSI System Design"
     },
     {
       "name": "Rabindra Prasad",
@@ -475,7 +513,8 @@
       "department": "Mechanical Engineering",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/rabindrap",
-      "slug": "rabindrap"
+      "slug": "rabindrap",
+      "research": "Friction Stir Welding/Processing, Discontinuously Reinforced Aluminum Composites, Nanophase Aluminum Alloys/Composites, Casting, Tribology"
     },
     {
       "name": "Ranjeet Kr",
@@ -502,7 +541,8 @@
       "department": "Mechanical Engineering",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/sachink",
-      "slug": "sachink"
+      "slug": "sachink",
+      "research": "Composites, Friction stir welding/Processing, Metal additive manufacturing, Microstructure modification, Forming, Smart manufacturing"
     },
     {
       "name": "Sachin Kumar Jain",
@@ -511,7 +551,8 @@
       "department": "Electronics & Communications Engineering",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/skjain",
-      "slug": "skjain"
+      "slug": "skjain",
+      "research": "Power & Control"
     },
     {
       "name": "Sangeeta Pandit",
@@ -529,7 +570,8 @@
       "department": "Electronics & Communication Engineering",
       "designation": "Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/snsharma",
-      "slug": "snsharma"
+      "slug": "snsharma",
+      "research": "Signal Processing, Computational Genomics & Proteomics"
     },
     {
       "name": "Satish Kumar Tiwari",
@@ -538,7 +580,8 @@
       "department": "Electronics & Communication Engineering",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/sktiwari",
-      "slug": "sktiwari"
+      "slug": "sktiwari",
+      "research": "6G, Nano Communication, Statistical SP"
     },
     {
       "name": "Shivansh Mishra",
@@ -547,7 +590,8 @@
       "department": "Computer Science & Engineering",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/shivansh",
-      "slug": "shivansh"
+      "slug": "shivansh",
+      "research": "Social Network Analysis, Link Prediction, Community Detection, Influence Maximization"
     },
     {
       "name": "Shivdayal Patel",
@@ -556,7 +600,8 @@
       "department": "Mechanical Engineering",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/Shivdayal",
-      "slug": "shivdayal"
+      "slug": "shivdayal",
+      "research": "Impacts, Probabilistic Design, Composite"
     },
     {
       "name": "Sraban Kumar Mohanty",
@@ -565,7 +610,8 @@
       "department": "Computer Science & Engineering",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/sraban",
-      "slug": "sraban"
+      "slug": "sraban",
+      "research": "Data Clustering, Proximity measures"
     },
     {
       "name": "Subir Lamba",
@@ -574,7 +620,8 @@
       "department": "Mathematics",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/subirs",
-      "slug": "subirs"
+      "slug": "subirs",
+      "research": "Parallel Computing, Computational Fluid Dynamics, Hyperbolic IBVP, Spectral Method"
     },
     {
       "name": "Sujoy Mukherjee",
@@ -583,7 +630,8 @@
       "department": "Mechanical Engineering",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/sujoy",
-      "slug": "sujoy"
+      "slug": "sujoy",
+      "research": "Smart Materials and Structures"
     },
     {
       "name": "Sunil Agrawal",
@@ -592,7 +640,8 @@
       "department": "Mechanical Engineering",
       "designation": "Associate Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/sa",
-      "slug": "sa"
+      "slug": "sa",
+      "research": "Industrial Engineering"
     },
     {
       "name": "Syam Kumar Chokka",
@@ -601,7 +650,8 @@
       "department": "Mechanical Engineering",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/syamkumar",
-      "slug": "syamkumar"
+      "slug": "syamkumar",
+      "research": "Design of Adhesive Bonded Joints, Non Destructive Evaluation, Polymer Composites and Self-healing Composites"
     },
     {
       "name": "Tanuja Sheorey",
@@ -610,7 +660,8 @@
       "department": "Mechanical Engineering",
       "designation": "Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/tanush",
-      "slug": "tanush"
+      "slug": "tanush",
+      "research": "Computational Fluid Dynamics,Micro-Fluidic devices"
     },
     {
       "name": "Tripti Singh",
@@ -619,7 +670,8 @@
       "department": "Design Programme",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/tripti",
-      "slug": "tripti"
+      "slug": "tripti",
+      "research": "Visual Communication, New Media"
     },
     {
       "name": "Trivesh Kumar",
@@ -628,7 +680,8 @@
       "department": "Electronics & Communications Engineering",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/trivesh",
-      "slug": "trivesh"
+      "slug": "trivesh",
+      "research": "RF and Microwave Antennas"
     },
     {
       "name": "Tushar Choudhary",
@@ -637,7 +690,8 @@
       "department": "Mechanical Engineering",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/tushar.choudhary",
-      "slug": "tushar.choudhary"
+      "slug": "tushar.choudhary",
+      "research": "CFD, FEA, Automobile, Thermodynamics, I.C. Engine, Manufacturing"
     },
     {
       "name": "Varunb",
@@ -655,7 +709,8 @@
       "department": "Mechanical Engineering",
       "designation": "Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/vkgupta",
-      "slug": "vkgupta"
+      "slug": "vkgupta",
+      "research": "Energy Harvesting, Smart Structures, MEMS, Finite Element Analysis, Robotics and Mechatronics, Mechanical Vibrations"
     },
     {
       "name": "Yashpal Singh Katharria",
@@ -664,7 +719,8 @@
       "department": "Physics",
       "designation": "Assistant Professor",
       "profile_url": "http://faculty.iiitdmj.ac.in/faculty/yashpalk",
-      "slug": "yashpalk"
+      "slug": "yashpalk",
+      "research": "Semiconductor Thin Films and Devices"
     }
   ],
   "source": "http://faculty.iiitdmj.ac.in/",
