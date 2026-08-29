@@ -8,8 +8,11 @@ _REPO_ENV = Path(__file__).resolve().parents[2] / ".env"
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=str(_REPO_ENV), extra="ignore")
 
-    use_mock: bool = True
-    cors_origins: str = "http://localhost:5173"
+    use_mock: bool = False
+    cors_origins: str = (
+        "http://localhost:5173,http://localhost:5174,http://localhost:3000,"
+        "http://127.0.0.1:5173,http://127.0.0.1:5174,http://127.0.0.1:3000"
+    )
 
     aimlapi_key: str = ""
     aimlapi_base_url: str = "https://api.aimlapi.com/v1"

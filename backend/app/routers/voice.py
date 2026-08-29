@@ -1,20 +1,19 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 
 from app.config import settings
+from app.services import speechmatics
 
 router = APIRouter(prefix="/api", tags=["voice"])
 
 
 @router.get("/voice/jwt")
-async def voice_jwt() -> dict:
+async def voice_jwt(ttl: int | None = Query(default=None, ge=60, le=3600)) -> dict:
     if not settings.speechmatics_api_key:
         raise HTTPException(
             status_code=501,
-            detail="SPEECHMATICS_API_KEY not set. Mic uses the official Speechmatics React SDK; this route only mints a JWT.",
+            detail="SPEECHMATICS_API_KEY not set",
         )
-    # Real JWT mint is Block E. Placeholder so the frontend has a contract.
-    return {
-        "token": "",
-        "ttl": settings.speechmatics_jwt_ttl_seconds,
-        "note": "Wire Speechmatics management API here. Do not put the long-lived key in the browser.",
-    }
+    try:
+        return speechmatics.mint_rt_jwt(ttl)
+    except Exception as err:  # noqa: BLE001
+        raise HTTPException(status_code=502, detail=str(err)) from err

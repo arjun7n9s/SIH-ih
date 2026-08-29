@@ -21,7 +21,14 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:5173 — empty-state chips play the 4-minute demo against mock SSE.
+Backend contract for any frontend (including `front-end/`): see [`backend/API.md`](backend/API.md) and live docs at http://127.0.0.1:8000/docs
+
+```bash
+# API only
+cd backend && .\.venv\Scripts\activate
+uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+curl http://127.0.0.1:8000/health
+```
 
 ## Corpus
 

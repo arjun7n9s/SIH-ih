@@ -1,0 +1,67 @@
+{
+  "items": [
+    {
+      "id": "rules-2017-vs-2025",
+      "claim": "Which academic rules bind current UG students",
+      "doc_a": "ug-guidelines-2025",
+      "doc_b": "ug-pg-guidelines-2017",
+      "triggers": ["attendance", "academic guideline", "supersede", "current rule", "उपस्थिति"],
+      "side_a": {
+        "title": "Academic Guidelines UG (modified Dec 2025)",
+        "url": "https://www.iiitdmj.ac.in/academics/download/Annexure%20II%20_%20Academic%20Guidelines_UG%20modified%20Dec%202025.pdf",
+        "page": 1,
+        "excerpt": "These rules/guidelines, after approval by the BoG, supersede all the earlier set of rules/guidelines of the Institute.",
+        "effective_from": "2025-12-01"
+      },
+      "side_b": {
+        "title": "Academic Guidelines UG and PG (2017)",
+        "url": "https://www.iiitdmj.ac.in/academics/download/Academic%20Guidelines_271017.pdf",
+        "page": 1,
+        "excerpt": "Still published on iiitdmj.ac.in as a downloadable academic guidelines PDF for UG/PG programmes.",
+        "effective_from": "2017-10-27"
+      }
+    },
+    {
+      "id": "refund-vs-faq",
+      "claim": "Fee refund on withdrawal",
+      "doc_a": "refund-2023",
+      "doc_b": "faq-2025",
+      "triggers": ["refund", "withdrawal", "वापसी", "cancellation", "joSAA", "csab"],
+      "side_a": {
+        "title": "Notification — Revised refund rule",
+        "url": "https://www.iiitdmj.ac.in/downloads/Notification_Revised_refund_rule.pdf",
+        "page": 1,
+        "excerpt": "Institute notification lists processing fee and percentage slabs for refund on cancellation.",
+        "effective_from": "2023-05-15"
+      },
+      "side_b": {
+        "title": "FAQ 2025",
+        "url": "https://www.iiitdmj.ac.in/downloads/FAQ%202025.pdf",
+        "page": 2,
+        "excerpt": "For the refund of fees for withdrawal before the last round contact JoSAA/CSAB authorities.",
+        "effective_from": "2025-01-01"
+      }
+    },
+    {
+      "id": "mess-ug-vs-phd",
+      "claim": "Mess advance amount",
+      "doc_a": "fee-ug-2024",
+      "doc_b": "fee-phd-2025",
+      "triggers": ["mess", "mess advance", "hostel fee", "fee structure"],
+      "side_a": {
+        "title": "Fee structure B.Tech / B.Des 2024-25",
+        "url": "https://www.iiitdmj.ac.in/academics/download/fee-structure-2024-25/UG2024.pdf",
+        "page": 1,
+        "excerpt": "Mess Advance listed as Rs. 15000 (adjustable as per actual).",
+        "effective_from": "2024-07-01"
+      },
+      "side_b": {
+        "title": "Fee structure PhD 2025-26",
+        "url": "https://www.iiitdmj.ac.in/academics/download/fee-structure-2025-26/Fee%20Structure%202025-2026%20-PhD.pdf",
+        "page": 1,
+        "excerpt": "Mess Advance listed as Rs. 20000 (adjustable as per actual).",
+        "effective_from": "2025-07-01"
+      }
+    }
+  ]
+}

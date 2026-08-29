@@ -23,3 +23,7 @@ data/index/
 Thumbs.db
 .idea/
 .vscode/
+
+data/index/
+data/corpus/fetch_log.json
+
