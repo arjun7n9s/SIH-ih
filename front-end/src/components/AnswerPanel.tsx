@@ -79,19 +79,17 @@ export function AnswerPanel({ answer }: { answer: AnswerState }) {
             <p className="mt-2 text-sm leading-relaxed text-ink/90">
               {answer.contradiction.claim}
             </p>
-            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+            <div className="mt-3 flex flex-wrap gap-2">
               {[answer.contradiction.a, answer.contradiction.b].map((s) => (
                 <a
                   key={s.n}
                   href={s.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="rounded-xl border border-warn/20 bg-surface px-3 py-2 text-sm hover:border-warn/50"
+                  className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-warn/25 bg-surface px-3 py-1.5 text-xs font-medium text-ink hover:border-warn/50"
                 >
-                  <span className="font-medium">[{s.n}] {s.title}</span>
-                  <span className="mt-1 block text-xs text-muted line-clamp-2">
-                    {cleanExcerpt(s.excerpt)}
-                  </span>
+                  <span className="text-warn">[{s.n}]</span>
+                  <span className="truncate">{s.title}</span>
                 </a>
               ))}
             </div>
@@ -99,36 +97,37 @@ export function AnswerPanel({ answer }: { answer: AnswerState }) {
         )}
 
         {answer.sources.length > 0 && (
-          <div className="mt-5 space-y-2">
+          <div className="mt-5">
             <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted">
               Sources
             </p>
-            <div className="grid gap-2">
-              {answer.sources.map((s) => (
-                <a
-                  key={`${s.n}-${s.url}`}
-                  href={s.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group flex items-start gap-3 rounded-2xl border border-line bg-mist/60 px-3 py-3 hover:border-green/35 hover:bg-green-soft/40"
-                >
-                  <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-green text-[11px] font-semibold text-white">
-                    {s.n}
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="flex items-center gap-1 text-sm font-medium text-ink">
-                      {s.title}
-                      <ExternalLink
-                        size={13}
-                        className="opacity-0 transition group-hover:opacity-60"
-                      />
+            <div className="mt-2 flex flex-wrap gap-2">
+              {answer.sources.map((s) => {
+                const tip = cleanExcerpt(s.excerpt);
+                const page = s.page != null ? ` · p.${s.page}` : "";
+                return (
+                  <a
+                    key={`${s.n}-${s.url}`}
+                    href={s.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    title={tip}
+                    className="group inline-flex max-w-full items-center gap-1.5 rounded-full border border-line bg-mist/70 px-3 py-1.5 text-xs text-ink hover:border-green/40 hover:bg-green-soft/50"
+                  >
+                    <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-green text-[10px] font-semibold text-white">
+                      {s.n}
                     </span>
-                  <span className="mt-1 block text-xs leading-relaxed text-muted line-clamp-2">
-                    {cleanExcerpt(s.excerpt)}
-                  </span>
-                  </span>
-                </a>
-              ))}
+                    <span className="truncate font-medium">
+                      {s.title}
+                      {page}
+                    </span>
+                    <ExternalLink
+                      size={12}
+                      className="shrink-0 opacity-40 group-hover:opacity-70"
+                    />
+                  </a>
+                );
+              })}
             </div>
           </div>
         )}

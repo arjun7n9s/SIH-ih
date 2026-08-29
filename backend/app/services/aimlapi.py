@@ -27,12 +27,13 @@ def chat_completion(
     *,
     temperature: float = 0.25,
     max_tokens: int = 700,
+    model: str | None = None,
 ) -> str:
     c = client()
     if not c:
         raise RuntimeError("AIMLAPI_KEY missing")
     res = c.chat.completions.create(
-        model=settings.aimlapi_chat_model,
+        model=model or settings.aimlapi_chat_model,
         messages=[
             {"role": "system", "content": system},
             {"role": "user", "content": user},

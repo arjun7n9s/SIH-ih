@@ -215,5 +215,187 @@
         "col2": "20000"
       }
     ]
+  },
+  {
+    "id": "fee-ug-2024-p1-t0",
+    "document_id": "fee-ug-2024",
+    "page": 1,
+    "kind": "table",
+    "title": "A. One-time payment at the time of admission",
+    "rows": [
+      {
+        "S.No.": "1",
+        "Head": "Admission",
+        "Gen/OBC/EWS": "2000",
+        "PWD/SC/ST": "2000"
+      },
+      {
+        "S.No.": "2",
+        "Head": "Grade Card",
+        "Gen/OBC/EWS": "2000",
+        "PWD/SC/ST": "2000"
+      },
+      {
+        "S.No.": "3",
+        "Head": "Provisional Certificate",
+        "Gen/OBC/EWS": "500",
+        "PWD/SC/ST": "500"
+      },
+      {
+        "S.No.": "4",
+        "Head": "Alumni Association Subscription",
+        "Gen/OBC/EWS": "1500",
+        "PWD/SC/ST": "1500"
+      },
+      {
+        "S.No.": "5",
+        "Head": "I Card",
+        "Gen/OBC/EWS": "500",
+        "PWD/SC/ST": "500"
+      },
+      {
+        "S.No.": "6",
+        "Head": "Career Development Fund",
+        "Gen/OBC/EWS": "2000",
+        "PWD/SC/ST": "2000"
+      },
+      {
+        "S.No.": "7",
+        "Head": "Student's Welfare",
+        "Gen/OBC/EWS": "2000",
+        "PWD/SC/ST": "2000"
+      },
+      {
+        "S.No.": "8",
+        "Head": "Caution Money (Refundable)",
+        "Gen/OBC/EWS": "5000",
+        "PWD/SC/ST": "5000"
+      },
+      {
+        "S.No.": "Total One Time Fees (A) in Rs.",
+        "Head": "15,500",
+        "Gen/OBC/EWS": "15,500",
+        "PWD/SC/ST": ""
+      }
+    ]
+  },
+  {
+    "id": "fee-ug-2024-p1-t1",
+    "document_id": "fee-ug-2024",
+    "page": 1,
+    "kind": "table",
+    "title": "B. Semester Fees (Academic fee) – Per semester",
+    "rows": [
+      {
+        "S.No.": "1",
+        "Head": "Gymkhana Fee",
+        "Gen/OBC/EWS": "3000",
+        "PWD/SC/ST": "3000"
+      },
+      {
+        "S.No.": "2",
+        "Head": "Examination Fee",
+        "Gen/OBC/EWS": "1000",
+        "PWD/SC/ST": "1000"
+      },
+      {
+        "S.No.": "3",
+        "Head": "Registration Fee",
+        "Gen/OBC/EWS": "1000",
+        "PWD/SC/ST": "1000"
+      },
+      {
+        "S.No.": "4",
+        "Head": "Medical Insurance + PHC",
+        "Gen/OBC/EWS": "1500",
+        "PWD/SC/ST": "1500"
+      },
+      {
+        "S.No.": "5",
+        "Head": "Internet and computer Charge",
+        "Gen/OBC/EWS": "1000",
+        "PWD/SC/ST": "1000"
+      },
+      {
+        "S.No.": "Total Semester Fees (Academic fee) (B) in Rs.",
+        "Head": "7,500",
+        "Gen/OBC/EWS": "7,500",
+        "PWD/SC/ST": ""
+      }
+    ]
+  },
+  {
+    "id": "fee-ug-2024-p1-t2",
+    "document_id": "fee-ug-2024",
+    "page": 1,
+    "kind": "table",
+    "title": "C. Semester Fees (Tuition fee and hostel fee) – Per semester",
+    "rows": [
+      {
+        "S.No.": "1",
+        "Head": "Tuition Fee",
+        "Gen/OBC/EWS": "71750",
+        "PWD/SC/ST": "NIL"
+      },
+      {
+        "S.No.": "2",
+        "Head": "Hostel Fees ##",
+        "Gen/OBC/EWS": "11000",
+        "PWD/SC/ST": "11000"
+      },
+      {
+        "S.No.": "Total Semester Fees (Tuition fee & hostel fee) (C) in Rs.",
+        "Head": "82,750",
+        "Gen/OBC/EWS": "11,000",
+        "PWD/SC/ST": ""
+      }
+    ]
+  },
+  {
+    "id": "fee-ug-2024-p1-t3",
+    "document_id": "fee-ug-2024",
+    "page": 1,
+    "kind": "table",
+    "title": "Grand Total (A+B+C) in Rs.",
+    "rows": [
+      {
+        "S.No.": "1",
+        "Category": "Gen/OBC/EWS",
+        "Sem-I": "1,05,750",
+        "Sem-II": "90,250",
+        "Sem-III": "90,250",
+        "Sem-IV": "90,250",
+        "Sem-V": "90,250",
+        "Sem-VI": "90,250",
+        "Sem-VII": "90,250",
+        "Sem-VIII": "90,250"
+      },
+      {
+        "S.No.": "2",
+        "Category": "PWD/SC/ST",
+        "Sem-I": "34,000",
+        "Sem-II": "18,500",
+        "Sem-III": "18,500",
+        "Sem-IV": "18,500",
+        "Sem-V": "18,500",
+        "Sem-VI": "18,500",
+        "Sem-VII": "18,500",
+        "Sem-VIII": "18,500"
+      }
+    ]
+  },
+  {
+    "id": "fee-ug-2024-p1-t4",
+    "document_id": "fee-ug-2024",
+    "page": 1,
+    "kind": "table",
+    "title": "D. Semester Fees (Mess) – Per semester (Will be as per actual)",
+    "rows": [
+      {
+        "S.No.": "1",
+        "Head": "Mess Advance (Adjustable as per actual & to be deposited separately at the time of physical reporting)",
+        "Amount in Rs.": "15000"
+      }
+    ]
   }
 ]

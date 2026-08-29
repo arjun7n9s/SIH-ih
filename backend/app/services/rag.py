@@ -1,40 +1,41 @@
-"""JSONL RAG with structures, freshness, contradiction cards, and open fallback."""
+"""JSONL RAG — intent-aware retrieve, short cited answers, compact sources."""
 
 from __future__ import annotations
 
 import math
 import re
+from typing import Literal
 
+from app.config import settings
 from app.services import aimlapi, conflict, extract, store
 
-# Cosine / keyword floors — below this we treat the index as a miss.
-_MIN_COSINE = 0.28
+_MIN_COSINE = 0.26
 _MIN_KEYWORD = 2
+_MAX_SOURCES = 3
+_EXCERPT_UI = 96
+_EXCERPT_CTX = 900
 
-SYSTEM_GROUNDED = """You are Suchna, the IIITDM Jabalpur campus knowledge assistant.
+Intent = Literal["fee", "refund", "attendance", "hostel", "about", "general"]
 
-Rules:
-- Prefer the provided sources. Cite them as [1], [2].
-- Be concise: usually 4–8 short sentences or a short bullet list. No filler, no preamble.
-- If sources disagree, say so and present both — do not pick a silent winner.
-- Match the user's language (English, Hindi, or Hinglish).
-- Never invent specific fee amounts, dates, or clause numbers that are not in the sources.
-- Ignore HTML tags / markup noise in sources; use only clear policy facts.
-- When a structured table is provided separately, point the student to it instead of pasting huge tables.
-- End only when the question is answered — no “hope this helps” closers."""
+SYSTEM_GROUNDED = """You are Suchna for PDPM IIITDM Jabalpur.
 
-SYSTEM_OPEN = """You are Suchna, a helpful campus knowledge assistant for students (especially IIITDM Jabalpur context).
+Hard rules:
+1. Answer ONLY what the student asked. Do not add institute history unless they asked about the institute itself.
+2. Be short: 2–5 sentences OR up to 5 bullets. No preamble (“Sure”, “Great question”).
+3. Use provided sources. Cite as [1], [2]. If a fee table is attached, use those numbers and cite that doc.
+4. Never invent fees, dates, or clause numbers.
+5. Ignore HTML / junk in sources.
+6. Match the user’s language (English / Hindi / Hinglish).
+7. If the question is vague about fees and no program is named, ask which program (UG B.Tech/B.Des, PhD, etc.) before quoting rupee amounts — you may say fee circulars exist for those programs.
+8. If sources disagree, say so in one line and cite both."""
 
-The campus document index did not return reliable sources for this question.
+SYSTEM_OPEN = """You are Suchna, a campus assistant for students.
 
-Rules:
-- Answer helpfully from general knowledge and common Indian institute practice, like a careful tutor.
-- Be concise: usually 4–8 short sentences or a short bullet list.
-- Start with one clear line: you could not find this in the official campus index, so this is general guidance — verify on iiitdmj.ac.in or with the academic / hostel office before acting.
-- Do NOT invent specific IIITDMJ fee figures, ordinance clause numbers, or “as per circular dated …” claims.
-- If the topic is institute-specific policy, give the practical next step (which office / page to check).
-- Match the user's language (English, Hindi, or Hinglish).
-- No filler, no long essays."""
+No reliable official passage was retrieved.
+- Answer briefly (2–5 sentences) from general knowledge.
+- First line: not found in the campus index — general guidance only; verify on iiitdmj.ac.in.
+- Do not invent IIITDMJ fee figures or fake circular dates.
+- Match the user’s language."""
 
 
 def index_ready() -> bool:
@@ -61,101 +62,283 @@ def _doc_date(ch: dict) -> str | None:
     return ch.get("effective_from") or ch.get("last_updated")
 
 
-def retrieve(query: str, k: int = 6) -> list[dict]:
-    """Return strong hits only. Empty list means open / general mode."""
+def _clean(text: str, limit: int) -> str:
+    t = re.sub(r"<[^>]+>", " ", text or "")
+    t = re.sub(r"&nbsp;|&amp;|&quot;", " ", t)
+    t = re.sub(r"\s+", " ", t).strip()
+    return t[:limit]
+
+
+def detect_intent(query: str) -> Intent:
+    q = query.lower()
+    if re.search(r"refund|वापसी|withdraw|cancellation", q):
+        return "refund"
+    if re.search(r"fee|fees|शुल्क|tuition|mess advance|hostel fee", q):
+        return "fee"
+    if re.search(r"attend|उपस्थिति|dugc|shortfall", q):
+        return "attendance"
+    if re.search(r"hostel|हॉस्टल|हॉस्टेल|warden", q):
+        return "hostel"
+    if re.search(r"\bhow is\b|\babout\b|established|what is iiitdm", q):
+        return "about"
+    return "general"
+
+
+def fee_program(query: str) -> str | None:
+    q = query.lower()
+    if re.search(r"\bphd\b|doctoral", q):
+        return "phd"
+    if re.search(r"\bug\b|b\.?\s*tech|b\.?\s*des|undergraduate|btech|bdes", q):
+        return "ug"
+    if re.search(r"\bpg\b|m\.?\s*tech|mtech|postgraduate", q):
+        return "pg"
+    return None
+
+
+def _boost(doc_id: str, intent: Intent) -> float:
+    did = (doc_id or "").lower()
+    if intent == "fee":
+        if did.startswith("fee-"):
+            return 0.12
+        if "faq" in did:
+            return -0.04
+        if "hostel" in did:
+            return -0.06
+    if intent == "refund" and ("refund" in did or "faq" in did):
+        return 0.1
+    if intent == "attendance" and "guideline" in did:
+        return 0.08
+    if intent == "hostel" and "hostel" in did:
+        return 0.1
+    return 0.0
+
+
+def _search_queries(query: str, intent: Intent) -> list[str]:
+    """Expand multi-part / casual questions into focused retrieval queries."""
+    base = _retrieval_query(query)
+    extras: list[str] = []
+    if intent == "fee":
+        prog = fee_program(query)
+        if prog == "phd":
+            extras.append("IIITDM Jabalpur PhD fee structure semester tuition hostel mess")
+        elif prog == "ug":
+            extras.append("IIITDM Jabalpur B.Tech B.Des UG fee structure tuition hostel")
+        else:
+            extras.append("IIITDM Jabalpur fee structure UG B.Tech PhD tuition")
+    elif intent == "refund":
+        extras.append("IIITDM Jabalpur refund rule admission withdrawal")
+    elif intent == "attendance":
+        extras.append("IIITDM Jabalpur attendance requirement end semester examination")
+    # Drop fluff like "hey how is" for fee-focused retrieval
+    if intent == "fee" and re.search(r"fee", query, re.I):
+        extras.insert(0, "fee structure " + (fee_program(query) or "undergraduate postgraduate phd"))
+    out = [base] + extras
+    # unique preserve order
+    seen: set[str] = set()
+    uniq: list[str] = []
+    for q in out:
+        k = q.strip().lower()
+        if k and k not in seen:
+            seen.add(k)
+            uniq.append(q.strip())
+    return uniq[:3]
+
+
+def retrieve(query: str, k: int = 8, intent: Intent | None = None) -> list[dict]:
+    intent = intent or detect_intent(query)
     chunks = store.chunks()
     if not chunks:
         return []
     as_of = _parse_as_of(query)
     pool = chunks
     if as_of:
-        filtered = []
-        for ch in chunks:
-            d = _doc_date(ch)
-            if d and str(d) <= as_of:
-                filtered.append(ch)
+        filtered = [ch for ch in chunks if (d := _doc_date(ch)) and str(d) <= as_of]
         if filtered:
             pool = filtered
 
+    # Prefer fee docs in pool when asking fees
+    if intent == "fee":
+        prog = fee_program(query)
+        preferred = []
+        for ch in pool:
+            did = (ch.get("document_id") or "").lower()
+            if prog == "phd" and did.startswith("fee-phd"):
+                preferred.append(ch)
+            elif prog == "ug" and did.startswith("fee-ug"):
+                preferred.append(ch)
+            elif not prog and did.startswith("fee-"):
+                preferred.append(ch)
+        if preferred:
+            pool = preferred + [c for c in pool if c not in preferred]
+
     embeds = store.embeddings()
-    q_text = _retrieval_query(query)
+    best: dict[str, tuple[float, dict]] = {}
+
+    queries = _search_queries(query, intent)
     if embeds and aimlapi.client():
-        q_emb = aimlapi.embed_texts([q_text])
-        if q_emb:
-            scored: list[tuple[float, dict]] = []
+        q_embs = aimlapi.embed_texts(queries)
+        for q_emb in q_embs:
             for ch in pool:
                 emb = embeds.get(ch["id"])
                 if not emb:
                     continue
-                scored.append((cosine(q_emb[0], emb), ch))
-            scored.sort(key=lambda x: x[0], reverse=True)
-            good = [c for s, c in scored[:k] if s >= _MIN_COSINE]
-            return good
+                score = cosine(q_emb, emb) + _boost(ch.get("document_id") or "", intent)
+                prev = best.get(ch["id"])
+                if not prev or score > prev[0]:
+                    best[ch["id"]] = (score, ch)
+        ranked = sorted(best.values(), key=lambda x: x[0], reverse=True)
+        good = [c for s, c in ranked if s >= _MIN_COSINE][:k]
+        if good:
+            return _dedupe_docs(good, _MAX_SOURCES + 2)
 
     tokens = set(re.findall(r"[a-zA-Z0-9\u0900-\u097F]{3,}", query.lower()))
     scored_kw: list[tuple[float, dict]] = []
     for ch in pool:
         text = ch.get("text", "").lower()
-        score = float(sum(1 for t in tokens if t in text))
+        score = float(sum(1 for t in tokens if t in text)) + _boost(ch.get("document_id") or "", intent) * 10
         scored_kw.append((score, ch))
     scored_kw.sort(key=lambda x: x[0], reverse=True)
-    good = [c for s, c in scored_kw[:k] if s >= _MIN_KEYWORD]
-    return good
+    good = [c for s, c in scored_kw if s >= _MIN_KEYWORD][:k]
+    return _dedupe_docs(good, _MAX_SOURCES + 2)
 
 
-def answer(query: str) -> dict:
-    hits = retrieve(query, k=6)
-    open_mode = not hits
+def _dedupe_docs(hits: list[dict], limit: int) -> list[dict]:
+    out: list[dict] = []
+    seen: set[str] = set()
+    for ch in hits:
+        did = ch.get("document_id") or ch.get("id") or ""
+        if did in seen:
+            continue
+        seen.add(did)
+        out.append(ch)
+        if len(out) >= limit:
+            break
+    return out
 
-    sources = []
-    context_parts = []
-    for i, ch in enumerate(hits, start=1):
-        excerpt = re.sub(r"<[^>]+>", " ", ch.get("text") or "")
-        excerpt = re.sub(r"\s+", " ", excerpt).strip()[:280]
+
+def _fee_tables(prog: str | None) -> list[dict]:
+    all_t = store.tables()
+    if prog == "phd":
+        ids = {"fee-phd-2025"}
+    elif prog == "ug":
+        ids = {"fee-ug-2024"}
+    else:
+        ids = {"fee-ug-2024", "fee-phd-2025"}
+    hits = [t for t in all_t if t.get("document_id") in ids]
+    # Prefer one useful table per doc
+    picked: list[dict] = []
+    seen: set[str] = set()
+    for t in hits:
+        did = t.get("document_id") or ""
+        if did in seen:
+            continue
+        seen.add(did)
+        picked.append(t)
+        if len(picked) >= 2:
+            break
+    return picked
+
+
+def _source_cards(hits: list[dict]) -> tuple[list[dict], list[str]]:
+    sources: list[dict] = []
+    context_parts: list[str] = []
+    for i, ch in enumerate(hits[:_MAX_SOURCES], start=1):
         sources.append(
             {
                 "n": i,
                 "title": ch.get("title") or ch.get("document_id") or "document",
                 "url": ch.get("url") or "",
                 "page": ch.get("page"),
-                "excerpt": excerpt,
+                "excerpt": _clean(ch.get("text") or "", _EXCERPT_UI),
                 "effective_from": ch.get("effective_from"),
                 "last_updated": ch.get("last_updated"),
                 "document_id": ch.get("document_id"),
             }
         )
         context_parts.append(
-            f"[{i}] title={ch.get('title')} doc={ch.get('document_id')} "
-            f"page={ch.get('page')} effective_from={ch.get('effective_from')}\n"
-            f"{ch.get('text', '')}"
+            f"[{i}] {ch.get('title')} | {ch.get('document_id')} | page={ch.get('page')} | "
+            f"as_of={ch.get('effective_from')}\n{_clean(ch.get('text') or '', _EXCERPT_CTX)}"
         )
+    return sources, context_parts
+
+
+def answer(query: str) -> dict:
+    intent = detect_intent(query)
+    prog = fee_program(query) if intent == "fee" else None
+    hits = retrieve(query, k=8, intent=intent)
+
+    # Fee with no program → clarify first (still attach short fee-doc citations if present)
+    if intent == "fee" and not prog:
+        fee_hits = [
+            c
+            for c in store.chunks()
+            if (c.get("document_id") or "").startswith("fee-")
+        ]
+        # one chunk per fee doc
+        clarify_hits = _dedupe_docs(fee_hits, 2) or hits[:2]
+        sources, _ = _source_cards(clarify_hits)
+        structures = _fee_tables(None)
+        text = (
+            "Which programme’s fees do you need?\n"
+            "• **UG** (B.Tech / B.Des)\n"
+            "• **PhD**\n"
+            "• **PG** (if you mean M.Tech / other PG — say which)\n\n"
+            "Reply with the programme and I’ll quote the official amounts from the fee circular"
+            + (" and show the table." if structures else ".")
+        )
+        if sources:
+            text += " Fee circulars on file: " + ", ".join(f"[{s['n']}] {s['title']}" for s in sources) + "."
+        return {
+            "text": text,
+            "sources": sources,
+            "structures": [],  # wait until they pick a programme
+            "freshness": None,
+            "contradiction": None,
+            "mode": "clarify",
+        }
+
+    open_mode = not hits
+    sources, context_parts = _source_cards(hits)
 
     doc_ids = [h.get("document_id") for h in hits if h.get("document_id")]
-    structures = [] if open_mode else extract.tables_for_docs(doc_ids, limit=2)
+    if intent == "fee" and prog:
+        structures = _fee_tables(prog)
+        # Ensure fee doc is in sources if table exists
+        if structures and not any((d or "").startswith("fee-") for d in doc_ids):
+            extra = [
+                c
+                for c in store.chunks()
+                if (c.get("document_id") or "")
+                == ("fee-phd-2025" if prog == "phd" else "fee-ug-2024")
+            ]
+            if extra:
+                hits = _dedupe_docs(extra + hits, _MAX_SOURCES)
+                sources, context_parts = _source_cards(hits)
+                doc_ids = [h.get("document_id") for h in hits if h.get("document_id")]
+    else:
+        structures = [] if open_mode else extract.tables_for_docs(doc_ids, limit=2)
 
     freshness = None
     dates = [str(d) for d in (_doc_date(h) for h in hits) if d]
     if dates:
-        freshness = {
-            "asOf": max(dates),
-            "lastUpdated": max(dates),
-        }
+        freshness = {"asOf": max(dates), "lastUpdated": max(dates)}
     as_of = _parse_as_of(query)
     if as_of and not open_mode:
         freshness = {"asOf": as_of[:4], "lastUpdated": max(dates) if dates else as_of}
 
-    contra_item = None if open_mode else conflict.match_seeded(query, doc_ids)
     contra_card = None
-    if contra_item:
-        contra_card = conflict.to_card(contra_item, hits)
-    elif not open_mode:
-        judged = conflict.judge_hits(query, hits)
-        if judged:
-            contra_card = conflict.to_card(judged, hits)
+    if not open_mode:
+        contra_item = conflict.match_seeded(query, doc_ids)
+        if contra_item:
+            contra_card = conflict.to_card(contra_item, hits)
+        else:
+            judged = conflict.judge_hits(query, hits)
+            if judged:
+                contra_card = conflict.to_card(judged, hits)
 
     if not aimlapi.client():
         return {
-            "text": "AIMLAPI_KEY missing — cannot generate. Sources retrieved below.",
+            "text": "AIMLAPI_KEY missing — cannot generate.",
             "sources": sources,
             "structures": structures,
             "freshness": freshness,
@@ -163,17 +346,15 @@ def answer(query: str) -> dict:
             "mode": "error",
         }
 
+    grounded_model = getattr(settings, "aimlapi_grounded_model", None) or settings.aimlapi_chat_model
+
     if open_mode:
-        user = (
-            f"Student question: {query}\n\n"
-            "No reliable campus-index passages were retrieved. "
-            "Answer in open / general-guidance mode."
-        )
         text = aimlapi.chat_completion(
             SYSTEM_OPEN,
-            user,
-            temperature=0.45,
-            max_tokens=550,
+            f"Student question: {query}",
+            temperature=0.4,
+            max_tokens=320,
+            model=settings.aimlapi_chat_model,
         )
         return {
             "text": text,
@@ -186,31 +367,48 @@ def answer(query: str) -> dict:
 
     table_note = ""
     if structures:
-        table_note = "\n\nStructured tables available to the UI (do not invent numbers):\n"
+        table_note = "\n\nOfficial fee/refund tables (use these numbers; UI will show the table):\n"
         table_note += str(
             [
                 {
                     "title": s.get("title"),
                     "document_id": s.get("document_id"),
-                    "rows": s.get("rows", [])[:8],
+                    "page": s.get("page"),
+                    "rows": s.get("rows", [])[:12],
                 }
                 for s in structures
             ]
         )
 
-    user = f"Question: {query}\n\nSources:\n\n" + "\n\n".join(context_parts) + table_note
+    focus = {
+        "fee": "Focus on fee amounts for the named programme. Skip institute history.",
+        "refund": "Focus on refund / withdrawal amounts and windows.",
+        "attendance": "Focus on the attendance % / exam eligibility rule.",
+        "hostel": "Focus on hostel rules or hostel fee if asked.",
+        "about": "One short factual blurb about the institute is OK, then stop.",
+        "general": "Answer the question directly.",
+    }[intent]
+
+    user = (
+        f"Student question: {query}\n"
+        f"Intent: {intent}\n"
+        f"Instruction: {focus}\n\n"
+        f"Sources:\n\n" + "\n\n".join(context_parts) + table_note
+    )
     if contra_card:
-        user += f"\n\nKnown disagreement: {contra_card.get('claim')}. Surface both sides briefly."
+        user += f"\n\nDisagreement to surface briefly: {contra_card.get('claim')}"
+
     text = aimlapi.chat_completion(
         SYSTEM_GROUNDED,
         user,
-        temperature=0.25,
-        max_tokens=650,
+        temperature=0.15,
+        max_tokens=420,
+        model=grounded_model,
     )
     return {
         "text": text,
         "sources": sources,
-        "structures": structures,
+        "structures": structures[:1] if intent == "fee" else structures[:2],
         "freshness": freshness,
         "contradiction": contra_card,
         "mode": "grounded",
@@ -218,14 +416,16 @@ def answer(query: str) -> dict:
 
 
 def _retrieval_query(query: str) -> str:
-    if re.search(r"[\u0900-\u097F]", query) and aimlapi.client():
+    # Strip chatty prefixes
+    q = re.sub(r"^(hey|hi|hello|hii)[,\s]+", "", query.strip(), flags=re.I)
+    if re.search(r"[\u0900-\u097F]", q) and aimlapi.client():
         try:
             return aimlapi.chat_completion(
-                "Translate to a short English search query for college policy documents. Output only the query.",
-                query,
+                "Rewrite as a short English search query for college policy PDFs. Output only the query.",
+                q,
                 temperature=0,
-                max_tokens=48,
+                max_tokens=40,
             )
         except Exception:  # noqa: BLE001
-            return query
-    return query
+            return q
+    return q

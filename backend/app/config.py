@@ -22,8 +22,10 @@ class Settings(BaseSettings):
 
     aimlapi_key: str = ""
     aimlapi_base_url: str = "https://api.aimlapi.com/v1"
-    # Gemini Flash via AIMLAPI — stronger reasoning; falls back still configurable via env.
+    # Open / clarify answers
     aimlapi_chat_model: str = "gemini-2.5-flash"
+    # Grounded cited answers — stronger instruction-following
+    aimlapi_grounded_model: str = "gpt-4o"
     aimlapi_embed_model: str = "text-embedding-3-large"
 
     bright_data_api_token: str = ""
