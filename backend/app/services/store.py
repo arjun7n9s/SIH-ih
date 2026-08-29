@@ -68,13 +68,27 @@ def contradictions_seed() -> list[dict]:
     return data.get("items", data if isinstance(data, list) else [])
 
 
+def _count_jsonl(path: Path) -> int:
+    if not path.exists():
+        return 0
+    n = 0
+    with path.open(encoding="utf-8") as fh:
+        for line in fh:
+            if line.strip():
+                n += 1
+    return n
+
+
 def index_stats() -> dict:
+    # Count lines without loading embeddings into RAM (critical on Vercel Hobby).
+    chunk_n = _count_jsonl(CHUNKS_PATH)
     return {
-        "chunks": len(chunks()),
-        "embeddings": len(embeddings()),
-        "tables": len(tables()),
+        "chunks": chunk_n,
+        "embeddings": _count_jsonl(EMBEDS_PATH),
+        "tables": len(tables()) if TABLES_PATH.exists() else 0,
         "contradictions": len(contradictions_seed()),
-        "ready": CHUNKS_PATH.exists() and CHUNKS_PATH.stat().st_size > 0,
+        "ready": chunk_n > 0 and EMBEDS_PATH.exists(),
+        "data_root": str(REPO / "data"),
     }
 
 

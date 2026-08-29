@@ -9,10 +9,16 @@
       ]
     },
     "backend": {
-      "root": ".",
+      "root": "backend",
       "framework": "fastapi",
-      "entrypoint": "backend/app/main.py",
-      "installCommand": "pip install -e ./backend"
+      "entrypoint": "app/main.py",
+      "installCommand": "pip install -e . && mkdir -p data/index data/corpus && cp -r ../data/index/. data/index/ && cp -f ../data/contradictions.seed.json data/contradictions.seed.json && cp -f ../data/corpus/manifest.yaml data/corpus/manifest.yaml",
+      "functions": {
+        "app/main.py": {
+          "maxDuration": 60,
+          "memory": 1024
+        }
+      }
     }
   },
   "rewrites": [

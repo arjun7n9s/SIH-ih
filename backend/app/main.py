@@ -4,8 +4,10 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-load_dotenv(Path(__file__).resolve().parents[2] / ".env")
-load_dotenv(Path(__file__).resolve().parents[1] / ".env")
+# Monorepo .env (local). On Vercel, platform env vars are injected — no file needed.
+_here = Path(__file__).resolve()
+load_dotenv(_here.parents[2] / ".env")  # SIHih/.env
+load_dotenv(_here.parents[1] / ".env")  # backend/.env
 
 from app.config import settings  # noqa: E402
 from app.routers import chat, companion, contradictions, corpus, voice  # noqa: E402

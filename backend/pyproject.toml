@@ -17,6 +17,9 @@ dependencies = [
   "python-multipart>=0.0.9",
 ]
 
+[tool.vercel]
+entrypoint = "app/main.py"
+
 [project.optional-dependencies]
 dev = ["ruff>=0.7.0"]
 

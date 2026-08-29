@@ -51,7 +51,16 @@ export async function* streamChat(query: string): AsyncGenerator<ChatEvent> {
     body: JSON.stringify({ query }),
   });
   if (!res.ok || !res.body) {
-    throw new Error(`Chat failed (${res.status}). Is the backend running on :8000?`);
+    let detail = "";
+    try {
+      detail = (await res.text()).slice(0, 180);
+    } catch {
+      /* ignore */
+    }
+    const where = API || "same-origin /api";
+    throw new Error(
+      `Chat failed (${res.status}) via ${where}.${detail ? ` ${detail}` : " Backend may still be starting — retry."}`,
+    );
   }
   const reader = res.body.getReader();
   const decoder = new TextDecoder();
