@@ -160,7 +160,7 @@ def main() -> int:
     seen_urls = {d["url"] for d in docs}
 
     for doc in docs:
-        print(f"→ {doc['id']}  {doc['url']}")
+        print(f"-> {doc['id']}  {doc['url']}")
         try:
             result = fetch_document(doc)
             print(f"  {result['kind']} via {result['via']}  {result['bytes']} bytes")
@@ -178,7 +178,7 @@ def main() -> int:
     report = REPO / "data" / "corpus" / "fetch_log.json"
     report.write_text(json.dumps(log, indent=2), encoding="utf-8")
     ok = sum(1 for row in log if row.get("ok"))
-    print(f"\n{ok}/{len(log)} saved. log → {report}")
+    print(f"\n{ok}/{len(log)} saved. log -> {report}")
     return 0 if ok else 1
 
 
