@@ -101,18 +101,36 @@ def search(query: str, limit: int = 5) -> list[tuple[float, dict]]:
 
 def looks_like_faculty_query(query: str) -> bool:
     q = query.lower()
+    # Institute offices — answer from general campus knowledge, not the directory index.
     if re.search(
-        r"email|e-mail|mail id|mailid|contact|phone|mobile|"
-        r"ईमेल|इमेल|मेल\s*आईडी|संपर्क|फोन|मोबाइल|"
-        r"प्रोफेसर|फैकल्टी|फैकलटी|faculty|professor|\bprof\b",
+        r"\bdirector\b|\bregistrar\b|\bdean\b|vice.?chancellor|निदेशक|डायरेक्टर|रजिस्ट्रार",
         q,
     ):
-        return True
+        return False
     if re.search(r"faculty\.iiitdmj|@iiitdmj\.ac\.in", q):
         return True
-    # A directory hit on a person name is enough ("who is Atul Gupta")
+    personish = bool(
+        re.search(
+            r"faculty|professor|\bprof\b|डॉ\.?|प्रो\.?|sir|madam|ma'?am|"
+            r"फैकल्टी|फैकलटी|प्रोफेसर",
+            q,
+        )
+    )
+    contactish = bool(
+        re.search(
+            r"email|e-mail|mail id|mailid|phone|mobile|"
+            r"ईमेल|इमेल|मेल\s*आईडी|फोन|मोबाइल",
+            q,
+        )
+    )
+    whoish = bool(re.search(r"\bwho is\b|who'?s\b|कौन\s+(हैं|है)", q))
+    if (personish and contactish) or (personish and whoish) or (contactish and whoish):
+        return True
+    if contactish or whoish or personish:
+        hits = search(query, limit=1)
+        return bool(hits and hits[0][0] >= 3.2)
     hits = search(query, limit=1)
-    return bool(hits and hits[0][0] >= 4.5)
+    return bool(hits and hits[0][0] >= 5.0)
 
 
 def english_name_hint(query: str) -> str | None:
@@ -127,7 +145,7 @@ def english_name_hint(query: str) -> str | None:
     try:
         hint = aimlapi.chat_completion(
             "The user asked in Hindi about an IIITDM Jabalpur faculty member. "
-            "Reply with only their name in English letters (example: Pritee Khanna). "
+            "Reply with only their name in English letters (Firstname Lastname). "
             "If there is no person, reply NONE.",
             query,
             temperature=0,
@@ -155,34 +173,20 @@ def lookup(query: str) -> list[dict]:
 
 
 def source_cards(rows: list[dict]) -> list[dict]:
-    sources: list[dict] = []
-    for i, r in enumerate(rows[:3], start=1):
-        sources.append(
-            {
-                "n": i,
-                "title": r.get("name") or "Faculty directory",
-                "url": r.get("profile_url") or HOME,
-                "page": None,
-                "excerpt": r.get("email") or r.get("department") or "",
-                "effective_from": None,
-                "last_updated": None,
-                "document_id": "faculty-directory",
-            }
-        )
-    if not sources:
-        sources.append(
-            {
-                "n": 1,
-                "title": "Faculty directory — IIITDM Jabalpur",
-                "url": HOME,
-                "page": None,
-                "excerpt": "faculty.iiitdmj.ac.in",
-                "effective_from": None,
-                "last_updated": None,
-                "document_id": "faculty-directory",
-            }
-        )
-    return sources
+    """Citation chips only — no person names in the UI chrome."""
+    url = (rows[0].get("profile_url") if rows else None) or HOME
+    return [
+        {
+            "n": 1,
+            "title": "Faculty directory",
+            "url": url,
+            "page": None,
+            "excerpt": "faculty.iiitdmj.ac.in",
+            "effective_from": None,
+            "last_updated": None,
+            "document_id": "faculty-directory",
+        }
+    ]
 
 
 def format_answer(rows: list[dict], query: str) -> str:

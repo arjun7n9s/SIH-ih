@@ -1,0 +1,672 @@
+{
+  "items": [
+    {
+      "name": "Akshay Pandey",
+      "email": "drakshay@iiitdmj.ac.in",
+      "phone": null,
+      "department": "Computer Science & Engineering",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/drakshay",
+      "slug": "drakshay"
+    },
+    {
+      "name": "Amaresh Chandra Mishra",
+      "email": "amresh@iiitdmj.ac.in",
+      "phone": "761-2794348",
+      "department": "Physics",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/amresh",
+      "slug": "amresh"
+    },
+    {
+      "name": "Amarnath M.",
+      "email": "amarnath@iiitdmj.ac.in",
+      "phone": "+91-761-2794417",
+      "department": "Mechanical Engineering",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/amarnath",
+      "slug": "amarnath"
+    },
+    {
+      "name": "Amit Vishwakarma",
+      "email": "amitv@iiitdmj.ac.in",
+      "phone": null,
+      "department": "Electronics & Communications Engineering",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/amitv",
+      "slug": "amitv"
+    },
+    {
+      "name": "Amrita Bhattacharjee",
+      "email": "amrita@iiitdmj.ac.in",
+      "phone": "07612794315",
+      "department": "Design Discipline",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/amrita",
+      "slug": "amrita"
+    },
+    {
+      "name": "Anil Kumar",
+      "email": "anilk@iiitdmj.ac.in",
+      "phone": "+91-761-2794466",
+      "department": "Electronics & Communications Engineering",
+      "designation": "Associate Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/anilk",
+      "slug": "anilk"
+    },
+    {
+      "name": "Aparajita Ojha",
+      "email": "aojha@iiitdmj.ac.in",
+      "phone": null,
+      "department": "Computer Science & Engineering",
+      "designation": "Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/aojha",
+      "slug": "aojha"
+    },
+    {
+      "name": "Ashish Parihar",
+      "email": "ashish.parihar@iiitdmj.ac.in",
+      "phone": null,
+      "department": null,
+      "designation": null,
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/ashish.parihar",
+      "slug": "ashish.parihar"
+    },
+    {
+      "name": "Asish K. Kundu",
+      "email": "asish.kundu@iiitdmj.ac.in",
+      "phone": "+91-761-2794342",
+      "department": "Physics",
+      "designation": "Associate Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/asish.kundu",
+      "slug": "asish.kundu"
+    },
+    {
+      "name": "Atul Gupta",
+      "email": "atul@iiitdmj.ac.in",
+      "phone": "2632139",
+      "department": "Computer Science & Engineering",
+      "designation": "Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/atul",
+      "slug": "atul"
+    },
+    {
+      "name": "Atul Kumar",
+      "email": "atul.kumar@iiitdmj.ac.in",
+      "phone": null,
+      "department": null,
+      "designation": null,
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/atul.kumar",
+      "slug": "atul.kumar"
+    },
+    {
+      "name": "Avinash Ravi Raja",
+      "email": "avinash.raviraja@iiitdmj.ac.in",
+      "phone": null,
+      "department": "Mechanical Engineering",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/avinash.raviraja",
+      "slug": "avinash.raviraja"
+    },
+    {
+      "name": "Ayan Seal",
+      "email": "ayan@iiitdmj.ac.in",
+      "phone": "07612794229",
+      "department": "Computer Science & Engineering",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/ayan",
+      "slug": "ayan"
+    },
+    {
+      "name": "B Mukherjee",
+      "email": "b.mukherjee@iiitdmj.ac.in",
+      "phone": "+91-761-2794471",
+      "department": null,
+      "designation": null,
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/b.mukherjee",
+      "slug": "b.mukherjee"
+    },
+    {
+      "name": "Bhupendra Gupta",
+      "email": "bhupen@iiitdmj.ac.in",
+      "phone": "+91-761-2794345",
+      "department": "Mathematics",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/bhupen",
+      "slug": "bhupen"
+    },
+    {
+      "name": "Deepmala",
+      "email": "deepmala@iiitdmj.ac.in",
+      "phone": "761-2794353",
+      "department": "Mathematics",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/deepmala",
+      "slug": "deepmala"
+    },
+    {
+      "name": "Dinesh Kumar V",
+      "email": "dineshk@iiitdmj.ac.in",
+      "phone": "+91-761-2794462",
+      "department": "Electronics & Communications Engineering",
+      "designation": "Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/dineshk",
+      "slug": "dineshk"
+    },
+    {
+      "name": "Dip Prakash Samajdar",
+      "email": "dip.samajdar@iiitdmj.ac.in",
+      "phone": "+919477137992",
+      "department": "Electronics & Communications Engineering",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/dip.samajdar",
+      "slug": "dip.samajdar"
+    },
+    {
+      "name": "Durgesh Singh",
+      "email": "durgesh@iiitdmj.ac.in",
+      "phone": "9473929004",
+      "department": "Computer Science & Engineering",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/durgesh",
+      "slug": "durgesh"
+    },
+    {
+      "name": "Ece",
+      "email": "ece@iiitdmj.ac.in",
+      "phone": "+91-761-2632524",
+      "department": null,
+      "designation": null,
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/ece",
+      "slug": "ece"
+    },
+    {
+      "name": "G Neha",
+      "email": "g.neha@iiitdmj.ac.in",
+      "phone": null,
+      "department": null,
+      "designation": null,
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/g.neha",
+      "slug": "g.neha"
+    },
+    {
+      "name": "Gowthaman S",
+      "email": "gowtham@iiitdmj.ac.in",
+      "phone": null,
+      "department": "Mechanical Engineering",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/gowtham",
+      "slug": "gowtham"
+    },
+    {
+      "name": "H. Chelladurai",
+      "email": "chella@iiitdmj.ac.in",
+      "phone": "+91-761-2794417",
+      "department": "Mechanical Engineering",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/chella",
+      "slug": "chella"
+    },
+    {
+      "name": "Himansu Sekhar Nanda",
+      "email": "himansu@iiitdmj.ac.in",
+      "phone": "+91 761-2794429",
+      "department": "Mechanical Engineering",
+      "designation": "Assistant Professor Grade 1",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/himansu",
+      "slug": "himansu"
+    },
+    {
+      "name": "Irshad",
+      "email": "irshad@iiitdmj.ac.in",
+      "phone": "+917612794067",
+      "department": null,
+      "designation": null,
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/irshad",
+      "slug": "irshad"
+    },
+    {
+      "name": "Jharakesh",
+      "email": "jharakesh@iiitdmj.ac.in",
+      "phone": "+91-9906088419",
+      "department": null,
+      "designation": null,
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/jharakesh",
+      "slug": "jharakesh"
+    },
+    {
+      "name": "Jitendar Kumar Tiwari",
+      "email": "jtiwari@iiitdmj.ac.in",
+      "phone": null,
+      "department": "Mechanical Engineering",
+      "designation": "DST Inspire Faculty",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/jtiwari",
+      "slug": "jtiwari"
+    },
+    {
+      "name": "Koushik Dutta",
+      "email": "koushikdutta@iiitdmj.ac.in",
+      "phone": null,
+      "department": "Electronics & Communications Engineering",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/koushikdutta",
+      "slug": "koushikdutta"
+    },
+    {
+      "name": "Lokendra Kumar Balyan",
+      "email": "balyan@iiitdmj.ac.in",
+      "phone": "+91-761-2794346",
+      "department": "Mathematics",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/balyan",
+      "slug": "balyan"
+    },
+    {
+      "name": "M. Zahid Ansari",
+      "email": "zahid@iiitdmj.ac.in",
+      "phone": "+91-761-2794422",
+      "department": "Mechanical Engineering",
+      "designation": "Associate Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/zahid",
+      "slug": "zahid"
+    },
+    {
+      "name": "Mamta Anand",
+      "email": "manand@iiitdmj.ac.in",
+      "phone": "+91-761-2794268",
+      "department": "English Language and Literature",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/manand",
+      "slug": "manand"
+    },
+    {
+      "name": "Manish Kumar Bajpai",
+      "email": "mkbajpai@iiitdmj.ac.in",
+      "phone": null,
+      "department": "Computer Science & Engineering",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/mkbajpai",
+      "slug": "mkbajpai"
+    },
+    {
+      "name": "Manish Kumar Thakur",
+      "email": "manishthakur@iiitdmj.ac.in",
+      "phone": null,
+      "department": "Mechanical Engineering",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/manishthakur",
+      "slug": "manishthakur"
+    },
+    {
+      "name": "Manoj Kumar Panda",
+      "email": "mkpanda@iiitdmj.ac.in",
+      "phone": "761-2794351",
+      "department": "Mathematics (NS)",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/mkpanda",
+      "slug": "mkpanda"
+    },
+    {
+      "name": "Manu",
+      "email": "manu@iiitdmj.ac.in",
+      "phone": "+91-761-2794431",
+      "department": null,
+      "designation": null,
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/manu",
+      "slug": "manu"
+    },
+    {
+      "name": "Matadeen Bansal",
+      "email": "mbansal@iiitdmj.ac.in",
+      "phone": "+91-761-2794469",
+      "department": "Electronics & Communications Engineering",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/mbansal",
+      "slug": "mbansal"
+    },
+    {
+      "name": "Mparihar",
+      "email": "mparihar@iiitdmj.ac.in",
+      "phone": "+91-761-2794467",
+      "department": null,
+      "designation": null,
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/mparihar",
+      "slug": "mparihar"
+    },
+    {
+      "name": "Mukesh Kumar Roy",
+      "email": null,
+      "phone": null,
+      "department": "Physics",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/mkroy",
+      "slug": "mkroy"
+    },
+    {
+      "name": "Navjeet",
+      "email": "navjeet@iiitdmj.ac.in",
+      "phone": "07612794480",
+      "department": null,
+      "designation": null,
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/navjeet",
+      "slug": "navjeet"
+    },
+    {
+      "name": "Neeraj K. Jaiswal",
+      "email": null,
+      "phone": null,
+      "department": "Physics",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/neeraj",
+      "slug": "neeraj"
+    },
+    {
+      "name": "Nihar Kumar Mahato",
+      "email": "nihar@iiitdmj.ac.in",
+      "phone": "+91-761-2794349",
+      "department": "Mathematics",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/nihar",
+      "slug": "nihar"
+    },
+    {
+      "name": "Nihar Ranjan Jena",
+      "email": "nrjena@iiitdmj.ac.in",
+      "phone": "+91-761-2794347",
+      "department": "Physics",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/nrjena",
+      "slug": "nrjena"
+    },
+    {
+      "name": "Nitish Andola",
+      "email": "nitish.andola@iiitdmj.ac.in",
+      "phone": null,
+      "department": "Computer Science & Engineering",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/nitish.andola",
+      "slug": "nitish.andola"
+    },
+    {
+      "name": "Pankaj Sharma",
+      "email": "pankaj.sharma@iiitdmj.ac.in",
+      "phone": null,
+      "department": null,
+      "designation": null,
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/pankaj.sharma",
+      "slug": "pankaj.sharma"
+    },
+    {
+      "name": "Pnkondekar",
+      "email": "pnkondekar@iiitdmj.ac.in",
+      "phone": "+91-761-2794460",
+      "department": null,
+      "designation": null,
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/pnkondekar",
+      "slug": "pnkondekar"
+    },
+    {
+      "name": "Ponappa.K",
+      "email": "kponappa@iiitdmj.ac.in",
+      "phone": "794429",
+      "department": "Mechanical Engineering",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/kponappa",
+      "slug": "kponappa"
+    },
+    {
+      "name": "Prabin Kumar Padhy",
+      "email": "prabin16@iiitdmj.ac.in",
+      "phone": "+91-761-2794463",
+      "department": "Electronics & Communications Engineering",
+      "designation": "Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/prabin16",
+      "slug": "prabin16"
+    },
+    {
+      "name": "Prabir Mukhopadhyay",
+      "email": "prabir@iiitdmj.ac.in",
+      "phone": "+91-761-2794310",
+      "department": "Design Discipline",
+      "designation": "Associate Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/prabir",
+      "slug": "prabir"
+    },
+    {
+      "name": "Prashant K. Jain",
+      "email": "pkjain@iiitdmj.ac.in",
+      "phone": "+91-761-2632644",
+      "department": "Mechanical Engineering",
+      "designation": "Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/pkjain",
+      "slug": "pkjain"
+    },
+    {
+      "name": "Pritee Khanna",
+      "email": "pkhanna@iiitdmj.ac.in",
+      "phone": null,
+      "department": "Computer Science & Engineering",
+      "designation": "Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/pkhanna",
+      "slug": "pkhanna"
+    },
+    {
+      "name": "Puneet Tandon",
+      "email": "ptandon@iiitdmj.ac.in",
+      "phone": "+91-761-2794411",
+      "department": "Mechanical Engineering & Design",
+      "designation": "Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/ptandon",
+      "slug": "ptandon"
+    },
+    {
+      "name": "Pushpa Raikwal",
+      "email": "praikwal@iiitdmj.ac.in",
+      "phone": "+917612794482",
+      "department": "Electronics & Communications Engineering",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/praikwal",
+      "slug": "praikwal"
+    },
+    {
+      "name": "Rabindra Prasad",
+      "email": "rabindrap@iiitdmj.ac.in",
+      "phone": null,
+      "department": "Mechanical Engineering",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/rabindrap",
+      "slug": "rabindrap"
+    },
+    {
+      "name": "Ranjeet Kr",
+      "email": "ranjeet.kr@iiitdmj.ac.in",
+      "phone": null,
+      "department": null,
+      "designation": null,
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/ranjeet.kr",
+      "slug": "ranjeet.kr"
+    },
+    {
+      "name": "Rpanwar",
+      "email": "rpanwar@iiitdmj.ac.in",
+      "phone": null,
+      "department": null,
+      "designation": null,
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/rpanwar",
+      "slug": "rpanwar"
+    },
+    {
+      "name": "Sachin Kumar",
+      "email": "sachink@iiitdmj.ac.in",
+      "phone": null,
+      "department": "Mechanical Engineering",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/sachink",
+      "slug": "sachink"
+    },
+    {
+      "name": "Sachin Kumar Jain",
+      "email": "skjain@iiitdmj.ac.in",
+      "phone": "+91-761-2794468",
+      "department": "Electronics & Communications Engineering",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/skjain",
+      "slug": "skjain"
+    },
+    {
+      "name": "Sangeeta Pandit",
+      "email": "s.pandit@iiitdmj.ac.in",
+      "phone": "+91-761-2794314",
+      "department": "Design Programme",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/s.pandit",
+      "slug": "s.pandit"
+    },
+    {
+      "name": "Sanjeev Narayan Sharma",
+      "email": "snsharma@iiitdmj.ac.in",
+      "phone": null,
+      "department": "Electronics & Communication Engineering",
+      "designation": "Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/snsharma",
+      "slug": "snsharma"
+    },
+    {
+      "name": "Satish Kumar Tiwari",
+      "email": "sktiwari@iiitdmj.ac.in",
+      "phone": "+91-761-2794480",
+      "department": "Electronics & Communication Engineering",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/sktiwari",
+      "slug": "sktiwari"
+    },
+    {
+      "name": "Shivansh Mishra",
+      "email": "shivansh@iiitdmj.ac.in",
+      "phone": null,
+      "department": "Computer Science & Engineering",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/shivansh",
+      "slug": "shivansh"
+    },
+    {
+      "name": "Shivdayal Patel",
+      "email": "shivdayal@iiitdmj.ac.in",
+      "phone": "+91 761-2794428",
+      "department": "Mechanical Engineering",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/Shivdayal",
+      "slug": "shivdayal"
+    },
+    {
+      "name": "Sraban Kumar Mohanty",
+      "email": "sraban@iiitdmj.ac.in",
+      "phone": "+91-761-2794224",
+      "department": "Computer Science & Engineering",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/sraban",
+      "slug": "sraban"
+    },
+    {
+      "name": "Subir Lamba",
+      "email": "subirs@iiitdmj.ac.in",
+      "phone": "+91-761-2794343",
+      "department": "Mathematics",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/subirs",
+      "slug": "subirs"
+    },
+    {
+      "name": "Sujoy Mukherjee",
+      "email": "sujoy@iiitdmj.ac.in",
+      "phone": "+91-761-2794421",
+      "department": "Mechanical Engineering",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/sujoy",
+      "slug": "sujoy"
+    },
+    {
+      "name": "Sunil Agrawal",
+      "email": "sa@iiitdmj.ac.in",
+      "phone": "+91-761-2794414",
+      "department": "Mechanical Engineering",
+      "designation": "Associate Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/sa",
+      "slug": "sa"
+    },
+    {
+      "name": "Syam Kumar Chokka",
+      "email": "syamkumar@iiitdmj.ac.in",
+      "phone": null,
+      "department": "Mechanical Engineering",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/syamkumar",
+      "slug": "syamkumar"
+    },
+    {
+      "name": "Tanuja Sheorey",
+      "email": "tanush@iiitdmj.ac.in",
+      "phone": "+91-761-2794412",
+      "department": "Mechanical Engineering",
+      "designation": "Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/tanush",
+      "slug": "tanush"
+    },
+    {
+      "name": "Tripti Singh",
+      "email": "ts@iiitdmj.ac.in",
+      "phone": "1714001",
+      "department": "Design Programme",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/tripti",
+      "slug": "tripti"
+    },
+    {
+      "name": "Trivesh Kumar",
+      "email": "trivesh@iiitdmj.ac.in",
+      "phone": "+917612794067",
+      "department": "Electronics & Communications Engineering",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/trivesh",
+      "slug": "trivesh"
+    },
+    {
+      "name": "Tushar Choudhary",
+      "email": "tushar.choudhary@iiitdmj.ac.in",
+      "phone": "+91-8811084233",
+      "department": "Mechanical Engineering",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/tushar.choudhary",
+      "slug": "tushar.choudhary"
+    },
+    {
+      "name": "Varunb",
+      "email": "varunb@iiitdmj.ac.in",
+      "phone": "+91-761-2794470",
+      "department": null,
+      "designation": null,
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/varunb",
+      "slug": "varunb"
+    },
+    {
+      "name": "Vijay Kumar Gupta",
+      "email": "vkgupta@iiitdmj.ac.in",
+      "phone": "+91-761-2794420",
+      "department": "Mechanical Engineering",
+      "designation": "Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/vkgupta",
+      "slug": "vkgupta"
+    },
+    {
+      "name": "Yashpal Singh Katharria",
+      "email": "yashpalk@iiitdmj.ac.in",
+      "phone": "+91 761 2794354",
+      "department": "Physics",
+      "designation": "Assistant Professor",
+      "profile_url": "http://faculty.iiitdmj.ac.in/faculty/yashpalk",
+      "slug": "yashpalk"
+    }
+  ],
+  "source": "http://faculty.iiitdmj.ac.in/",
+  "count": 74
+}

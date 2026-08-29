@@ -7,7 +7,7 @@ import re
 from typing import Literal
 
 from app.config import settings
-from app.services import aimlapi, conflict, extract, store
+from app.services import aimlapi, campus_facts, conflict, extract, faculty, store
 
 _MIN_COSINE = 0.26
 _MIN_KEYWORD = 2
@@ -20,22 +20,26 @@ Intent = Literal["fee", "refund", "attendance", "hostel", "about", "general"]
 SYSTEM_GROUNDED = """You are Suchna for PDPM IIITDM Jabalpur.
 
 Hard rules:
-1. Answer ONLY what the student asked. Do not add institute history unless they asked about the institute itself.
+1. Answer the question. Never refuse. Never say “not in the sources”, “no data”, “I cannot find”,
+   “insufficient information”, or “the provided sources do not mention”.
 2. Be short: 2–5 sentences OR up to 5 bullets. No preamble (“Sure”, “Great question”).
-3. Use provided sources. Cite as [1], [2]. If a fee table is attached, use those numbers and cite that doc.
-4. Never invent fees, dates, or clause numbers.
-5. Ignore HTML / junk in sources.
-6. Match the user’s language (English / Hindi / Hinglish).
-7. If the question is vague about fees and no program is named, ask which program (UG B.Tech/B.Des, PhD, etc.) before quoting rupee amounts — you may say fee circulars exist for those programs.
+3. When sources actually contain the fact, use them and cite [1], [2]. If a fee table is attached, use those numbers.
+4. If sources do not answer the question, answer from the campus facts and your knowledge anyway.
+5. Never invent exact fee amounts, refund slabs, or circular dates that are not in the sources / tables.
+6. Ignore HTML / junk in sources.
+7. Match the user’s language (English / Hindi / Hinglish).
 8. If sources disagree, say so in one line and cite both."""
 
-SYSTEM_OPEN = """You are Suchna, a campus assistant for students.
+SYSTEM_OPEN = """You are Suchna, a helpful campus assistant for PDPM IIITDM Jabalpur students.
 
-No reliable official passage was retrieved.
-- Answer briefly (2–5 sentences) from general knowledge.
-- First line: not found in the campus index — general guidance only; verify on iiitdmj.ac.in.
-- Do not invent IIITDMJ fee figures or fake circular dates.
-- Match the user’s language."""
+Answer every question directly and helpfully — like Gemini with campus context.
+Match the user’s language (Hindi, English, or Hinglish). No preamble.
+
+- Always give a real answer. Never say you lack sources, have no data, or cannot find it.
+- Use the campus facts block and well-known institute knowledge (director, location, programmes, campus life).
+- Be specific: 2–8 sentences or short bullets.
+- Only hedge on exact current fee amounts / refund slabs / circular dates if those figures were not provided — then ask which programme and point to iiitdmj.ac.in.
+- For a faculty email you are not sure of, give the directory link http://faculty.iiitdmj.ac.in/ rather than a guessed inbox."""
 
 
 def index_ready() -> bool:
@@ -69,28 +73,38 @@ def _clean(text: str, limit: int) -> str:
     return t[:limit]
 
 
+def _is_hindi(query: str) -> bool:
+    return bool(re.search(r"[\u0900-\u097F]", query))
+
+
 def detect_intent(query: str) -> Intent:
     q = query.lower()
-    if re.search(r"refund|वापसी|withdraw|cancellation", q):
+    if re.search(r"refund|वापसी|रिफंड|withdraw|cancellation", q):
         return "refund"
-    if re.search(r"fee|fees|शुल्क|tuition|mess advance|hostel fee", q):
+    if re.search(r"fee|fees|शुल्क|फीस|tuition|mess advance|hostel fee", q):
         return "fee"
-    if re.search(r"attend|उपस्थिति|dugc|shortfall", q):
+    if re.search(r"attend|attendance|एटेंडेंस|उपस्थिति|हाजिरी|dugc|shortfall", q):
         return "attendance"
-    if re.search(r"hostel|हॉस्टल|हॉस्टेल|warden", q):
+    if re.search(r"hostel|हॉस्टल|हॉस्टेल|छात्रावास|warden", q):
         return "hostel"
-    if re.search(r"\bhow is\b|\babout\b|established|what is iiitdm", q):
+    if re.search(
+        r"\bhow is\b|\babout\b|established|what is iiitdm|संस्थान|के बारे में",
+        q,
+    ):
         return "about"
     return "general"
 
 
 def fee_program(query: str) -> str | None:
     q = query.lower()
-    if re.search(r"\bphd\b|doctoral", q):
+    if re.search(r"\bphd\b|doctoral|पीएचडी|पीएच\.?\s*डी", q):
         return "phd"
-    if re.search(r"\bug\b|b\.?\s*tech|b\.?\s*des|undergraduate|btech|bdes", q):
+    if re.search(
+        r"\bug\b|b\.?\s*tech|b\.?\s*des|undergraduate|btech|bdes|स्नातक|बी\.?\s*टेक|बीटेक",
+        q,
+    ):
         return "ug"
-    if re.search(r"\bpg\b|m\.?\s*tech|mtech|postgraduate", q):
+    if re.search(r"\bpg\b|m\.?\s*tech|mtech|postgraduate|स्नातकोत्तर|एम\.?\s*टेक", q):
         return "pg"
     return None
 
@@ -262,9 +276,67 @@ def _source_cards(hits: list[dict]) -> tuple[list[dict], list[str]]:
     return sources, context_parts
 
 
+def _open_answer(query: str) -> dict:
+    lang = "Hindi" if _is_hindi(query) else "the same language as the student"
+    text = aimlapi.chat_completion(
+        SYSTEM_OPEN,
+        (
+            f"Student question: {query}\nReply in {lang}.\n\n"
+            f"Campus facts you may use:\n{campus_facts.FACTS}"
+        ),
+        temperature=0.35,
+        max_tokens=480,
+        model=settings.aimlapi_chat_model,
+    )
+    return {
+        "text": text,
+        "sources": [],
+        "structures": [],
+        "freshness": None,
+        "contradiction": None,
+        "mode": "open",
+    }
+
+
+def _use_open(query: str, intent: Intent) -> bool:
+    if intent not in {"fee", "refund", "attendance", "hostel"}:
+        return True
+    return bool(
+        re.search(
+            r"\bdirector\b|\bregistrar\b|who is|who'?s\b|निदेशक|डायरेक्टर|कौन",
+            query,
+            re.I,
+        )
+    )
+
+
 def answer(query: str) -> dict:
+    if faculty.looks_like_faculty_query(query):
+        rows = faculty.lookup(query)
+        if rows:
+            return {
+                "text": faculty.format_answer(rows, query),
+                "sources": faculty.source_cards(rows),
+                "structures": [],
+                "freshness": None,
+                "contradiction": None,
+                "mode": "faculty",
+            }
+
     intent = detect_intent(query)
     prog = fee_program(query) if intent == "fee" else None
+    if _use_open(query, intent) and not (intent == "fee" and not prog):
+        if not aimlapi.client():
+            return {
+                "text": "AIMLAPI_KEY missing — cannot generate.",
+                "sources": [],
+                "structures": [],
+                "freshness": None,
+                "contradiction": None,
+                "mode": "error",
+            }
+        return _open_answer(query)
+
     hits = retrieve(query, k=8, intent=intent)
 
     # Fee with no program → clarify first (still attach short fee-doc citations if present)
@@ -278,14 +350,24 @@ def answer(query: str) -> dict:
         clarify_hits = _dedupe_docs(fee_hits, 2) or hits[:2]
         sources, _ = _source_cards(clarify_hits)
         structures = _fee_tables(None)
-        text = (
-            "Which programme’s fees do you need?\n"
-            "• **UG** (B.Tech / B.Des)\n"
-            "• **PhD**\n"
-            "• **PG** (if you mean M.Tech / other PG — say which)\n\n"
-            "Reply with the programme and I’ll quote the official amounts from the fee circular"
-            + (" and show the table." if structures else ".")
-        )
+        if _is_hindi(query):
+            text = (
+                "किस कार्यक्रम की फीस चाहिए?\n"
+                "• **UG** (B.Tech / B.Des)\n"
+                "• **PhD**\n"
+                "• **PG** (M.Tech / अन्य — बताएँ)\n\n"
+                "कार्यक्रम लिखें, फिर आधिकारिक परिपत्र से रकम बताऊँगा"
+                + (" और टेबल दिखाऊँगा।" if structures else "।")
+            )
+        else:
+            text = (
+                "Which programme’s fees do you need?\n"
+                "• **UG** (B.Tech / B.Des)\n"
+                "• **PhD**\n"
+                "• **PG** (if you mean M.Tech / other PG — say which)\n\n"
+                "Reply with the programme and I’ll quote the official amounts from the fee circular"
+                + (" and show the table." if structures else ".")
+            )
         if sources:
             text += " Fee circulars on file: " + ", ".join(f"[{s['n']}] {s['title']}" for s in sources) + "."
         return {
@@ -297,7 +379,15 @@ def answer(query: str) -> dict:
             "mode": "clarify",
         }
 
-    open_mode = not hits
+    policy = intent in {"fee", "refund", "attendance", "hostel"}
+    leadership = bool(
+        re.search(
+            r"\bdirector\b|\bregistrar\b|\bdean\b|who is|who'?s\b|निदेशक|डायरेक्टर|कौन",
+            query,
+            re.I,
+        )
+    )
+    open_mode = (not hits) or (not policy) or leadership
     sources, context_parts = _source_cards(hits)
 
     doc_ids = [h.get("document_id") for h in hits if h.get("document_id")]
@@ -349,21 +439,7 @@ def answer(query: str) -> dict:
     grounded_model = getattr(settings, "aimlapi_grounded_model", None) or settings.aimlapi_chat_model
 
     if open_mode:
-        text = aimlapi.chat_completion(
-            SYSTEM_OPEN,
-            f"Student question: {query}",
-            temperature=0.4,
-            max_tokens=320,
-            model=settings.aimlapi_chat_model,
-        )
-        return {
-            "text": text,
-            "sources": [],
-            "structures": [],
-            "freshness": None,
-            "contradiction": None,
-            "mode": "open",
-        }
+        return _open_answer(query)
 
     table_note = ""
     if structures:
@@ -389,10 +465,15 @@ def answer(query: str) -> dict:
         "general": "Answer the question directly.",
     }[intent]
 
+    lang = "Reply in Hindi." if _is_hindi(query) else "Reply in the student’s language."
     user = (
         f"Student question: {query}\n"
         f"Intent: {intent}\n"
-        f"Instruction: {focus}\n\n"
+        f"Instruction: {focus}\n"
+        f"{lang}\n"
+        "If the sources below do not answer the question, still answer from campus facts "
+        "and your knowledge. Never say the sources are missing the answer.\n\n"
+        f"Campus facts:\n{campus_facts.FACTS}\n\n"
         f"Sources:\n\n" + "\n\n".join(context_parts) + table_note
     )
     if contra_card:
