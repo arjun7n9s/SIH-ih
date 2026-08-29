@@ -23,8 +23,8 @@ def _want_live(body: ChatRequest) -> bool:
     if body.mock is True:
         return False
     if body.mock is False:
-        return bool(settings.aimlapi_key) and rag.index_ready()
-    return (not settings.use_mock) and bool(settings.aimlapi_key) and rag.index_ready()
+        return bool(settings.aimlapi_key)
+    return (not settings.use_mock) and bool(settings.aimlapi_key)
 
 
 def _events_from_result(result: dict) -> list[dict]:
@@ -65,7 +65,8 @@ async def chat_stream(body: ChatRequest) -> StreamingResponse:
     async def gen_live():
         stages = labels_for(body.query)
         yield _sse({"type": "status", "label": stages[0]})
-        task = asyncio.create_task(asyncio.to_thread(rag.answer, body.query))
+        hist = [m.model_dump() for m in (body.history or [])]
+        task = asyncio.create_task(asyncio.to_thread(rag.answer, body.query, hist))
         step = 0
         try:
             while not task.done():
@@ -136,7 +137,8 @@ async def chat_sync(body: ChatRequest) -> ChatSyncResponse:
             contradiction=contradiction,
             mode="mock",
         )
-    result = await asyncio.to_thread(rag.answer, body.query)
+    hist = [m.model_dump() for m in (body.history or [])]
+    result = await asyncio.to_thread(rag.answer, body.query, hist)
     return ChatSyncResponse(
         text=result.get("text") or "",
         sources=result.get("sources") or [],

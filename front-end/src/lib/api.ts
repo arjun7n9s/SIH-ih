@@ -1,5 +1,11 @@
 import { applyEvent } from "./reduce";
-import { emptyAnswer, type AnswerState, type ChatEvent, type Source } from "./types";
+import {
+  emptyAnswer,
+  type AnswerState,
+  type ChatEvent,
+  type HistoryTurn,
+  type Source,
+} from "./types";
 
 const API = import.meta.env.VITE_API_URL || "";
 
@@ -44,11 +50,14 @@ export const FEATURES = [
   },
 ];
 
-export async function* streamChat(query: string): AsyncGenerator<ChatEvent> {
+export async function* streamChat(
+  query: string,
+  history: HistoryTurn[] = [],
+): AsyncGenerator<ChatEvent> {
   const res = await fetch(`${API}/api/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query }),
+    body: JSON.stringify({ query, history }),
   });
   if (!res.ok || !res.body) {
     let detail = "";
@@ -82,10 +91,11 @@ export async function* streamChat(query: string): AsyncGenerator<ChatEvent> {
 export async function runQuery(
   query: string,
   onTick: (s: AnswerState) => void,
+  history: HistoryTurn[] = [],
 ): Promise<AnswerState> {
   let state = emptyAnswer(query);
   onTick(state);
-  for await (const event of streamChat(query)) {
+  for await (const event of streamChat(query, history)) {
     state = applyEvent(state, event);
     onTick({ ...state });
   }

@@ -28,8 +28,14 @@ class Contradiction(BaseModel):
     b: Source
 
 
+class HistoryTurn(BaseModel):
+    role: str
+    content: str
+
+
 class ChatRequest(BaseModel):
     query: str
+    history: list[HistoryTurn] = Field(default_factory=list)
     conversation_id: str | None = None
     as_of: str | None = None
     mock: bool | None = None

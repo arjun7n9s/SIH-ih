@@ -17,29 +17,21 @@ _EXCERPT_CTX = 900
 
 Intent = Literal["fee", "refund", "attendance", "hostel", "about", "general"]
 
-SYSTEM_GROUNDED = """You are Suchna for PDPM IIITDM Jabalpur.
+SYSTEM = """You are Suchna, the campus assistant for PDPM IIITDM Jabalpur.
 
-Hard rules:
-1. Answer the question. Never refuse. Never say “not in the sources”, “no data”, “I cannot find”,
-   “insufficient information”, or “the provided sources do not mention”.
-2. Be short: 2–5 sentences OR up to 5 bullets. No preamble (“Sure”, “Great question”).
-3. When sources actually contain the fact, use them and cite [1], [2]. If a fee table is attached, use those numbers.
-4. If sources do not answer the question, answer from the campus facts and your knowledge anyway.
-5. Never invent exact fee amounts, refund slabs, or circular dates that are not in the sources / tables.
-6. Ignore HTML / junk in sources.
-7. Match the user’s language (English / Hindi / Hinglish).
-8. If sources disagree, say so in one line and cite both."""
+Answer every question directly. No preamble.
+Default language is English. Reply in Hindi only when the latest student message
+contains Hindi (Devanagari) script. Hinglish written in English letters → English.
 
-SYSTEM_OPEN = """You are Suchna, a helpful campus assistant for PDPM IIITDM Jabalpur students.
+This is one ongoing chat. Follow-ups like “UG”, “and the phone?”, “what about hostel”
+refer to the earlier messages — do not treat them as a new unrelated question.
 
-Answer every question directly and helpfully — like Gemini with campus context.
-Match the user’s language (Hindi, English, or Hinglish). No preamble.
-
-- Always give a real answer. Never say you lack sources, have no data, or cannot find it.
-- Use the campus facts block and well-known institute knowledge (director, location, programmes, campus life).
-- Be specific: 2–8 sentences or short bullets.
-- Only hedge on exact current fee amounts / refund slabs / circular dates if those figures were not provided — then ask which programme and point to iiitdmj.ac.in.
-- For a faculty email you are not sure of, give the directory link http://faculty.iiitdmj.ac.in/ rather than a guessed inbox."""
+ALWAYS give a useful answer. Never say “no context”, “not in the sources”, “no data”,
+or that you lack the answer.
+If a FACULTY DIRECTORY block is present, use it for names and emails.
+If official passages or a fee table contain the number, use those figures and cite [1], [2].
+Otherwise answer from campus facts and your knowledge.
+If a programme is unnamed for fees, ask UG / PhD / PG first."""
 
 
 def index_ready() -> bool:
@@ -74,7 +66,46 @@ def _clean(text: str, limit: int) -> str:
 
 
 def _is_hindi(query: str) -> bool:
-    return bool(re.search(r"[\u0900-\u097F]", query))
+    """True only when the latest message has Devanagari — not Hinglish in Latin letters."""
+    return bool(re.search(r"[\u0900-\u097F]", query or ""))
+
+
+def _is_followup(query: str) -> bool:
+    q = (query or "").strip()
+    words = re.findall(r"[a-zA-Z0-9\u0900-\u097F]+", q)
+    if len(words) <= 6:
+        return True
+    return bool(
+        re.match(
+            r"^(and|also|what about|how about|his|her|their|that|those|this|"
+            r"yes|ok|okay|ug|phd|pg|b\.?\s*tech)\b",
+            q,
+            re.I,
+        )
+    )
+
+
+def _blend_query(query: str, history: list[dict] | None) -> str:
+    if not history or not _is_followup(query):
+        return query
+    prior = [m.get("content") or "" for m in history if (m.get("role") or "") == "user"]
+    if not prior:
+        return query
+    return f"{prior[-1].strip()} — {query.strip()}"
+
+
+def _history_block(history: list[dict] | None) -> str:
+    if not history:
+        return ""
+    lines: list[str] = []
+    for m in history[-8:]:
+        role = "Student" if m.get("role") == "user" else "Suchna"
+        content = (m.get("content") or "").strip()[:800]
+        if content:
+            lines.append(f"{role}: {content}")
+    if not lines:
+        return ""
+    return "Earlier in this chat:\n" + "\n".join(lines) + "\n\n"
 
 
 def detect_intent(query: str) -> Intent:
@@ -276,43 +307,46 @@ def _source_cards(hits: list[dict]) -> tuple[list[dict], list[str]]:
     return sources, context_parts
 
 
-def _open_answer(query: str) -> dict:
-    lang = "Hindi" if _is_hindi(query) else "the same language as the student"
-    text = aimlapi.chat_completion(
-        SYSTEM_OPEN,
-        (
-            f"Student question: {query}\nReply in {lang}.\n\n"
-            f"Campus facts you may use:\n{campus_facts.FACTS}"
-        ),
-        temperature=0.35,
-        max_tokens=480,
-        model=settings.aimlapi_chat_model,
-    )
+def _clarify_fees(query: str, hits: list[dict]) -> dict:
+    fee_hits = [c for c in store.chunks() if (c.get("document_id") or "").startswith("fee-")]
+    clarify_hits = _dedupe_docs(fee_hits, 2) or hits[:2]
+    sources, _ = _source_cards(clarify_hits)
+    structures = _fee_tables(None)
+    if _is_hindi(query):
+        text = (
+            "किस कार्यक्रम की फीस चाहिए?\n"
+            "• **UG** (B.Tech / B.Des)\n"
+            "• **PhD**\n"
+            "• **PG** (M.Tech / अन्य — बताएँ)\n\n"
+            "कार्यक्रम लिखें, फिर आधिकारिक परिपत्र से रकम बताऊँगा"
+            + (" और टेबल दिखाऊँगा।" if structures else "।")
+        )
+    else:
+        text = (
+            "Which programme’s fees do you need?\n"
+            "• **UG** (B.Tech / B.Des)\n"
+            "• **PhD**\n"
+            "• **PG** (if you mean M.Tech / other PG — say which)\n\n"
+            "Reply with the programme and I’ll quote the official amounts from the fee circular"
+            + (" and show the table." if structures else ".")
+        )
+    if sources:
+        text += " Fee circulars on file: " + ", ".join(f"[{s['n']}] {s['title']}" for s in sources) + "."
     return {
         "text": text,
-        "sources": [],
+        "sources": sources,
         "structures": [],
         "freshness": None,
         "contradiction": None,
-        "mode": "open",
+        "mode": "clarify",
     }
 
 
-def _use_open(query: str, intent: Intent) -> bool:
-    if intent not in {"fee", "refund", "attendance", "hostel"}:
-        return True
-    return bool(
-        re.search(
-            r"\bdirector\b|\bregistrar\b|who is|who'?s\b|निदेशक|डायरेक्टर|कौन",
-            query,
-            re.I,
-        )
-    )
-
-
-def answer(query: str) -> dict:
-    if faculty.looks_like_faculty_query(query):
-        rows = faculty.lookup(query)
+def answer(query: str, history: list[dict] | None = None) -> dict:
+    # Direct directory hit — do not send this through a “sources-only” model.
+    lookup_q = _blend_query(query, history)
+    if faculty.looks_like_faculty_query(lookup_q) or faculty.looks_like_faculty_query(query):
+        rows = faculty.lookup(lookup_q) or faculty.lookup(query)
         if rows:
             return {
                 "text": faculty.format_answer(rows, query),
@@ -323,77 +357,25 @@ def answer(query: str) -> dict:
                 "mode": "faculty",
             }
 
-    intent = detect_intent(query)
-    prog = fee_program(query) if intent == "fee" else None
-    if _use_open(query, intent) and not (intent == "fee" and not prog):
-        if not aimlapi.client():
-            return {
-                "text": "AIMLAPI_KEY missing — cannot generate.",
-                "sources": [],
-                "structures": [],
-                "freshness": None,
-                "contradiction": None,
-                "mode": "error",
-            }
-        return _open_answer(query)
-
-    hits = retrieve(query, k=8, intent=intent)
-
-    # Fee with no program → clarify first (still attach short fee-doc citations if present)
-    if intent == "fee" and not prog:
-        fee_hits = [
-            c
-            for c in store.chunks()
-            if (c.get("document_id") or "").startswith("fee-")
-        ]
-        # one chunk per fee doc
-        clarify_hits = _dedupe_docs(fee_hits, 2) or hits[:2]
-        sources, _ = _source_cards(clarify_hits)
-        structures = _fee_tables(None)
-        if _is_hindi(query):
-            text = (
-                "किस कार्यक्रम की फीस चाहिए?\n"
-                "• **UG** (B.Tech / B.Des)\n"
-                "• **PhD**\n"
-                "• **PG** (M.Tech / अन्य — बताएँ)\n\n"
-                "कार्यक्रम लिखें, फिर आधिकारिक परिपत्र से रकम बताऊँगा"
-                + (" और टेबल दिखाऊँगा।" if structures else "।")
-            )
-        else:
-            text = (
-                "Which programme’s fees do you need?\n"
-                "• **UG** (B.Tech / B.Des)\n"
-                "• **PhD**\n"
-                "• **PG** (if you mean M.Tech / other PG — say which)\n\n"
-                "Reply with the programme and I’ll quote the official amounts from the fee circular"
-                + (" and show the table." if structures else ".")
-            )
-        if sources:
-            text += " Fee circulars on file: " + ", ".join(f"[{s['n']}] {s['title']}" for s in sources) + "."
-        return {
-            "text": text,
-            "sources": sources,
-            "structures": [],  # wait until they pick a programme
-            "freshness": None,
-            "contradiction": None,
-            "mode": "clarify",
-        }
-
+    intent = detect_intent(lookup_q)
+    prog = fee_program(lookup_q) if intent == "fee" else fee_program(query)
     policy = intent in {"fee", "refund", "attendance", "hostel"}
-    leadership = bool(
-        re.search(
-            r"\bdirector\b|\bregistrar\b|\bdean\b|who is|who'?s\b|निदेशक|डायरेक्टर|कौन",
-            query,
-            re.I,
-        )
-    )
-    open_mode = (not hits) or (not policy) or leadership
-    sources, context_parts = _source_cards(hits)
 
+    if intent == "fee" and not prog:
+        return _clarify_fees(query, [])
+
+    hits: list[dict] = []
+    if policy:
+        try:
+            hits = retrieve(lookup_q, k=8, intent=intent)
+        except Exception:  # noqa: BLE001
+            hits = []
+
+    sources, context_parts = _source_cards(hits)
     doc_ids = [h.get("document_id") for h in hits if h.get("document_id")]
+    structures: list[dict] = []
     if intent == "fee" and prog:
         structures = _fee_tables(prog)
-        # Ensure fee doc is in sources if table exists
         if structures and not any((d or "").startswith("fee-") for d in doc_ids):
             extra = [
                 c
@@ -404,20 +386,16 @@ def answer(query: str) -> dict:
             if extra:
                 hits = _dedupe_docs(extra + hits, _MAX_SOURCES)
                 sources, context_parts = _source_cards(hits)
-                doc_ids = [h.get("document_id") for h in hits if h.get("document_id")]
-    else:
-        structures = [] if open_mode else extract.tables_for_docs(doc_ids, limit=2)
+    elif policy and hits:
+        structures = extract.tables_for_docs(doc_ids, limit=2)
 
     freshness = None
     dates = [str(d) for d in (_doc_date(h) for h in hits) if d]
     if dates:
         freshness = {"asOf": max(dates), "lastUpdated": max(dates)}
-    as_of = _parse_as_of(query)
-    if as_of and not open_mode:
-        freshness = {"asOf": as_of[:4], "lastUpdated": max(dates) if dates else as_of}
 
     contra_card = None
-    if not open_mode:
+    if policy and hits:
         contra_item = conflict.match_seeded(query, doc_ids)
         if contra_item:
             contra_card = conflict.to_card(contra_item, hits)
@@ -436,15 +414,10 @@ def answer(query: str) -> dict:
             "mode": "error",
         }
 
-    grounded_model = getattr(settings, "aimlapi_grounded_model", None) or settings.aimlapi_chat_model
-
-    if open_mode:
-        return _open_answer(query)
-
+    directory = faculty.directory_prompt()
     table_note = ""
     if structures:
-        table_note = "\n\nOfficial fee/refund tables (use these numbers; UI will show the table):\n"
-        table_note += str(
+        table_note = "\n\nOfficial fee/refund tables (use these numbers):\n" + str(
             [
                 {
                     "title": s.get("title"),
@@ -456,43 +429,37 @@ def answer(query: str) -> dict:
             ]
         )
 
-    focus = {
-        "fee": "Focus on fee amounts for the named programme. Skip institute history.",
-        "refund": "Focus on refund / withdrawal amounts and windows.",
-        "attendance": "Focus on the attendance % / exam eligibility rule.",
-        "hostel": "Focus on hostel rules or hostel fee if asked.",
-        "about": "One short factual blurb about the institute is OK, then stop.",
-        "general": "Answer the question directly.",
-    }[intent]
-
-    lang = "Reply in Hindi." if _is_hindi(query) else "Reply in the student’s language."
+    lang = "Hindi (Devanagari)" if _is_hindi(query) else "English"
     user = (
-        f"Student question: {query}\n"
-        f"Intent: {intent}\n"
-        f"Instruction: {focus}\n"
-        f"{lang}\n"
-        "If the sources below do not answer the question, still answer from campus facts "
-        "and your knowledge. Never say the sources are missing the answer.\n\n"
-        f"Campus facts:\n{campus_facts.FACTS}\n\n"
-        f"Sources:\n\n" + "\n\n".join(context_parts) + table_note
+        f"{_history_block(history)}"
+        f"Latest student message: {query}\n"
+        f"Resolved question (use this if the latest line is a follow-up): {lookup_q}\n"
+        f"Reply in {lang} only. Answer the question. Do not say you lack context.\n\n"
+        f"Campus facts:\n{campus_facts.FACTS}\n"
     )
+    if directory:
+        user += f"\nFACULTY DIRECTORY (authoritative for emails):\n{directory}\n"
+    if context_parts:
+        user += "\nOfficial passages:\n\n" + "\n\n".join(context_parts)
+    user += table_note
     if contra_card:
         user += f"\n\nDisagreement to surface briefly: {contra_card.get('claim')}"
 
     text = aimlapi.chat_completion(
-        SYSTEM_GROUNDED,
+        SYSTEM,
         user,
-        temperature=0.15,
-        max_tokens=420,
-        model=grounded_model,
+        temperature=0.25,
+        max_tokens=520,
+        model=settings.aimlapi_chat_model,
     )
+    fac_sources = faculty.source_cards(faculty.lookup(query)) if directory and faculty.lookup(query) else []
     return {
         "text": text,
-        "sources": sources,
+        "sources": sources or fac_sources,
         "structures": structures[:1] if intent == "fee" else structures[:2],
         "freshness": freshness,
         "contradiction": contra_card,
-        "mode": "grounded",
+        "mode": "live",
     }
 
 

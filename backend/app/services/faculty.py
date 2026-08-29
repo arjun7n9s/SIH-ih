@@ -5,31 +5,18 @@ from __future__ import annotations
 import json
 import re
 from functools import lru_cache
+from pathlib import Path
 
 from app.services.store import REPO
 
-FACULTY_PATH = REPO / "data" / "index" / "faculty.json"
 HOME = "http://faculty.iiitdmj.ac.in/"
-
-# Hindi / spelling variants seen in student questions → index tokens
-_ALIASES = {
-    "प्रीती": "pritee pkhanna khanna",
-    "प्रिति": "pritee pkhanna khanna",
-    "प्रीति": "pritee pkhanna khanna",
-    "खन्ना": "khanna pkhanna pritee",
-    "अतुल": "atul gupta",
-    "गुप्ता": "gupta atul",
-    "ओझा": "ojha aojha aparajita",
-    "अपरजिता": "aparajita ojha aojha",
-    "पी.के.": "pkhanna",
-    "sraban": "sraban",
-    "शुभ्रांशु": "himansu",
-}
+_PACKAGED = Path(__file__).resolve().parents[1] / "faculty_data.json"
+_INDEXED = REPO / "data" / "index" / "faculty.json"
 
 _STOP = {
     "what", "who", "whom", "email", "mail", "e-mail", "faculty", "professor",
-    "prof", "dr", "the", "of", "is", "for", "please", "tell", "me", "please",
-    "contact", "phone", "number", "id", "address", "give", "need", "want",
+    "prof", "the", "of", "is", "for", "please", "tell", "me", "contact",
+    "phone", "number", "id", "address", "give", "need", "want", "from",
     "ka", "ki", "ke", "kya", "hai", "hain",
     "का", "की", "के", "क्या", "है", "हैं", "बताओ", "बताइए", "दीजिए",
     "ईमेल", "मेल", "प्रोफेसर", "फैकल्टी", "फैकलटी", "सर", "मैम",
@@ -42,80 +29,102 @@ def _norm(s: str) -> str:
     return re.sub(r"\s+", " ", s).strip()
 
 
-def _expand(query: str) -> str:
-    extra = []
-    for token, mapped in _ALIASES.items():
-        if token in query.lower() or token in query:
-            extra.append(mapped)
-    return query + (" " + " ".join(extra) if extra else "")
+def _compact(s: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", (s or "").lower())
+
+
+def _strip_titles(s: str) -> str:
+    return re.sub(
+        r"\b(dr|prof|professor|mr|ms|mrs|sir|madam|डॉ|प्रो)\b\.?",
+        " ",
+        s,
+        flags=re.I,
+    )
 
 
 @lru_cache(maxsize=1)
 def all_faculty() -> list[dict]:
-    if not FACULTY_PATH.exists():
-        return []
-    data = json.loads(FACULTY_PATH.read_text(encoding="utf-8"))
-    return data.get("items") or []
+    for path in (_INDEXED, _PACKAGED):
+        if path.exists():
+            data = json.loads(path.read_text(encoding="utf-8"))
+            items = data.get("items") or []
+            if items:
+                return items
+    return []
 
 
 def clear_cache() -> None:
     all_faculty.cache_clear()
 
 
+def directory_prompt() -> str:
+    rows = all_faculty()
+    if not rows:
+        return ""
+    lines = ["name | email | department | designation"]
+    for r in rows:
+        lines.append(
+            " | ".join(
+                [
+                    r.get("name") or r.get("slug") or "",
+                    r.get("email") or "",
+                    r.get("department") or "",
+                    r.get("designation") or "",
+                ]
+            )
+        )
+    return "\n".join(lines)
+
+
 def _score(query: str, row: dict) -> float:
-    q = _norm(_expand(query))
+    q = _norm(_strip_titles(query))
+    qc = _compact(q)
     name = _norm(row.get("name") or "")
+    nc = _compact(name)
     slug = _norm(row.get("slug") or "")
+    sc = _compact(slug)
     email = _norm(row.get("email") or "")
     local = email.split("@")[0] if email else ""
+    lc = _compact(local)
     if not q:
         return 0.0
     score = 0.0
     if name and name in q:
-        score += 6.0
-    compact = q.replace(" ", "")
-    if slug and slug in compact:
-        score += 5.0
-    if local and local in compact:
-        score += 5.0
+        score += 8.0
+    if nc and len(nc) > 5 and nc in qc:
+        score += 8.0
+    if sc and len(sc) > 4 and sc in qc:
+        score += 7.0
+    if lc and len(lc) > 4 and lc in qc:
+        score += 7.0
     q_tokens = [t for t in q.split() if len(t) > 2 and t not in _STOP]
     name_tokens = set(name.split())
-    slug_tokens = set(slug.replace(".", " ").split())
+    blob = f"{name} {slug} {local} {nc} {sc} {lc}"
     hits = 0
     for t in q_tokens:
-        if t in name_tokens or t in slug_tokens or t == local or t in local:
+        tc = _compact(t)
+        if t in name_tokens or tc in blob or (len(tc) > 3 and tc in nc):
             hits += 1
-            score += 1.8
+            score += 2.0
     if hits >= 2:
-        score += 2.0
-    # last-token last-name
-    if q_tokens and (q_tokens[-1] in name_tokens or q_tokens[-1] == slug or q_tokens[-1] == local):
-        score += 1.4
+        score += 3.0
     return score
 
 
 def search(query: str, limit: int = 5) -> list[tuple[float, dict]]:
     ranked = sorted(((_score(query, r), r) for r in all_faculty()), key=lambda x: x[0], reverse=True)
-    return [(s, r) for s, r in ranked if s >= 1.6][:limit]
+    return [(s, r) for s, r in ranked if s >= 2.0][:limit]
 
 
 def looks_like_faculty_query(query: str) -> bool:
     q = query.lower()
-    # Institute offices — answer from general campus knowledge, not the directory index.
     if re.search(
-        r"\bdirector\b|\bregistrar\b|\bdean\b|vice.?chancellor|निदेशक|डायरेक्टर|रजिस्ट्रार",
+        r"\bdirector\b|\bregistrar\b|vice.?chancellor|निदेशक|डायरेक्टर|रजिस्ट्रार",
         q,
     ):
         return False
     if re.search(r"faculty\.iiitdmj|@iiitdmj\.ac\.in", q):
         return True
-    personish = bool(
-        re.search(
-            r"faculty|professor|\bprof\b|डॉ\.?|प्रो\.?|sir|madam|ma'?am|"
-            r"फैकल्टी|फैकलटी|प्रोफेसर",
-            q,
-        )
-    )
     contactish = bool(
         re.search(
             r"email|e-mail|mail id|mailid|phone|mobile|"
@@ -123,57 +132,24 @@ def looks_like_faculty_query(query: str) -> bool:
             q,
         )
     )
-    whoish = bool(re.search(r"\bwho is\b|who'?s\b|कौन\s+(हैं|है)", q))
-    if (personish and contactish) or (personish and whoish) or (contactish and whoish):
-        return True
-    if contactish or whoish or personish:
-        hits = search(query, limit=1)
-        return bool(hits and hits[0][0] >= 3.2)
-    hits = search(query, limit=1)
-    return bool(hits and hits[0][0] >= 5.0)
-
-
-def english_name_hint(query: str) -> str | None:
-    """If the question is Hindi, ask the chat model for the English faculty name."""
-    if not re.search(r"[\u0900-\u097F]", query):
-        return None
-    from app.services import aimlapi
-    from app.config import settings
-
-    if not aimlapi.client():
-        return None
-    try:
-        hint = aimlapi.chat_completion(
-            "The user asked in Hindi about an IIITDM Jabalpur faculty member. "
-            "Reply with only their name in English letters (Firstname Lastname). "
-            "If there is no person, reply NONE.",
-            query,
-            temperature=0,
-            max_tokens=24,
-            model=settings.aimlapi_chat_model,
+    personish = bool(
+        re.search(
+            r"faculty|professor|\bprof\b|\bdr\b|डॉ\.?|प्रो\.?|sir|madam|"
+            r"फैकल्टी|फैकलटी|प्रोफेसर",
+            q,
         )
-    except Exception:  # noqa: BLE001
-        return None
-    hint = (hint or "").strip().strip('"')
-    if not hint or hint.upper() == "NONE" or len(hint) > 60:
-        return None
-    return hint
+    )
+    if contactish or personish:
+        return True
+    hits = search(query, limit=1)
+    return bool(hits and hits[0][0] >= 6.0)
 
 
 def lookup(query: str) -> list[dict]:
-    hits = search(query)
-    if hits and hits[0][0] >= 2.4:
-        return [r for _, r in hits]
-    hint = english_name_hint(query)
-    if hint:
-        more = search(hint)
-        if more:
-            return [r for _, r in more]
-    return [r for _, r in hits]
+    return [r for _, r in search(query)]
 
 
 def source_cards(rows: list[dict]) -> list[dict]:
-    """Citation chips only — no person names in the UI chrome."""
     url = (rows[0].get("profile_url") if rows else None) or HOME
     return [
         {
@@ -193,14 +169,8 @@ def format_answer(rows: list[dict], query: str) -> str:
     hindi = bool(re.search(r"[\u0900-\u097F]", query))
     if not rows:
         if hindi:
-            return (
-                "इंडेक्स में यह नाम नहीं मिला। पूरा अंग्रेज़ी नाम लिखकर देखें, "
-                "या http://faculty.iiitdmj.ac.in/ खोलें।"
-            )
-        return (
-            "I couldn’t match that name in the faculty directory. "
-            "Try the exact spelling, or open http://faculty.iiitdmj.ac.in/"
-        )
+            return "डायरेक्टरी में यह नाम नहीं मिला — http://faculty.iiitdmj.ac.in/ पर देखें।"
+        return "No exact directory match — check http://faculty.iiitdmj.ac.in/"
     lines: list[str] = []
     for r in rows[:3]:
         bits = [f"**{r.get('name') or r.get('slug')}**"]
@@ -217,5 +187,5 @@ def format_answer(rows: list[dict], query: str) -> str:
             detail.append(f"Profile: {r['profile_url']}")
         lines.append(" — ".join(bits) + ("\n" + "\n".join(detail) if detail else ""))
     if hindi:
-        return "फैकल्टी डायरेक्टरी (faculty.iiitdmj.ac.in):\n\n" + "\n\n".join(lines)
-    return "From the faculty directory (faculty.iiitdmj.ac.in):\n\n" + "\n\n".join(lines)
+        return "फैकल्टी डायरेक्टरी:\n\n" + "\n\n".join(lines)
+    return "From the faculty directory:\n\n" + "\n\n".join(lines)

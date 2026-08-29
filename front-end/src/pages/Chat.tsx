@@ -15,7 +15,7 @@ import {
   uploadCompanion,
 } from "../lib/api";
 import { statusLabelsFor } from "../lib/status";
-import { emptyAnswer, type AnswerState, type ChatTurn } from "../lib/types";
+import { emptyAnswer, type AnswerState, type Conversation, type HistoryTurn } from "../lib/types";
 
 function uid() {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
@@ -34,7 +34,7 @@ function ChatShell() {
   const [busy, setBusy] = useState(false);
   const [banner, setBanner] = useState<string | null>(null);
   const [live, setLive] = useState<AnswerState | null>(null);
-  const [history, setHistory] = useState<ChatTurn[]>([]);
+  const [threads, setThreads] = useState<Conversation[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [sidebar, setSidebar] = useState(false);
   const [voiceOpen, setVoiceOpen] = useState(false);
@@ -46,6 +46,10 @@ function ChatShell() {
   const mediaRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<BlobPart[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const activeIdRef = useRef<string | null>(null);
+  const threadsRef = useRef<Conversation[]>([]);
+  activeIdRef.current = activeId;
+  threadsRef.current = threads;
 
   useEffect(() => {
     void healthCheck().then((h) => {
@@ -63,33 +67,53 @@ function ChatShell() {
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [live, history, busy]);
+  }, [live, threads, busy]);
 
-  const visible = useMemo(() => {
-    if (activeId) return history.find((h) => h.id === activeId) ?? null;
-    return null;
-  }, [activeId, history]);
+  const active = useMemo(
+    () => threads.find((t) => t.id === activeId) ?? null,
+    [activeId, threads],
+  );
 
   const ask = useCallback(async (query: string) => {
     const q = query.trim();
     if (!q) return;
+    const thread = threadsRef.current.find((t) => t.id === activeIdRef.current);
+    const hist: HistoryTurn[] = [];
+    for (const m of thread?.messages ?? []) {
+      hist.push({ role: "user", content: m.query });
+      if (m.answer.text) hist.push({ role: "assistant", content: m.answer.text });
+    }
     setBusy(true);
     setBanner(null);
-    setActiveId(null);
     setDraft("");
     const start = emptyAnswer(q);
     start.status = statusLabelsFor(q)[0];
     setLive(start);
     try {
-      const final = await runQuery(q, setLive);
-      const turn: ChatTurn = {
+      const final = await runQuery(q, setLive, hist);
+      const turn = {
         id: uid(),
         query: q,
         answer: final,
         createdAt: Date.now(),
       };
-      setHistory((prev) => [turn, ...prev].slice(0, 24));
-      setActiveId(turn.id);
+      const currentId = activeIdRef.current;
+      if (!currentId) {
+        const conv: Conversation = {
+          id: uid(),
+          title: q,
+          messages: [turn],
+          createdAt: Date.now(),
+        };
+        setThreads((prev) => [conv, ...prev].slice(0, 24));
+        setActiveId(conv.id);
+      } else {
+        setThreads((prev) =>
+          prev.map((c) =>
+            c.id === currentId ? { ...c, messages: [...c.messages, turn] } : c,
+          ),
+        );
+      }
       setLive(null);
     } catch (err) {
       setBanner(err instanceof Error ? err.message : String(err));
@@ -160,8 +184,7 @@ function ChatShell() {
     }
   }
 
-  const showing = live ?? visible?.answer ?? null;
-  const empty = !showing && !busy;
+  const empty = !active && !live && !busy;
 
   return (
     <div className="flex h-dvh overflow-hidden bg-mist">
@@ -192,13 +215,13 @@ function ChatShell() {
           }}
           className="mb-3 w-full rounded-2xl border border-dashed border-green/30 bg-green-soft/50 px-3 py-2.5 text-left text-sm font-medium text-green"
         >
-          + New question
+          + New chat
         </button>
         <div className="space-y-1 overflow-y-auto pb-8" style={{ maxHeight: "calc(100dvh - 140px)" }}>
-          {history.length === 0 && (
+          {threads.length === 0 && (
             <p className="px-2 py-6 text-sm text-muted">Your questions will land here.</p>
           )}
-          {history.map((h) => (
+          {threads.map((h) => (
             <button
               key={h.id}
               type="button"
@@ -211,9 +234,10 @@ function ChatShell() {
                 activeId === h.id ? "bg-green-soft text-ink" : "text-muted hover:bg-mist hover:text-ink"
               }`}
             >
-              <span className="line-clamp-2 font-medium">{h.query}</span>
+              <span className="line-clamp-2 font-medium">{h.title}</span>
               <span className="mt-1 block font-mono text-[10px] uppercase tracking-wider opacity-70">
                 {new Date(h.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                {h.messages.length > 1 ? ` · ${h.messages.length} turns` : ""}
               </span>
             </button>
           ))}
@@ -295,12 +319,15 @@ function ChatShell() {
                 </div>
               </div>
             ) : (
-              <>
-                {busy && showing && !showing.text && (
-                  <LogoLoader label={showing.status || "Searching campus docs…"} />
+              <div className="space-y-6">
+                {active?.messages.map((m) => (
+                  <AnswerPanel key={m.id} answer={m.answer} />
+                ))}
+                {busy && live && !live.text && (
+                  <LogoLoader label={live.status || "Searching campus docs…"} />
                 )}
-                {showing && (showing.text || showing.done) && <AnswerPanel answer={showing} />}
-              </>
+                {live && (live.text || live.done) && <AnswerPanel answer={live} />}
+              </div>
             )}
           </div>
         </div>

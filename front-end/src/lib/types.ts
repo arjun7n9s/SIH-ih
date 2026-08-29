@@ -41,6 +41,18 @@ export type ChatTurn = {
   createdAt: number;
 };
 
+export type Conversation = {
+  id: string;
+  title: string;
+  messages: ChatTurn[];
+  createdAt: number;
+};
+
+export type HistoryTurn = {
+  role: "user" | "assistant";
+  content: string;
+};
+
 export const emptyAnswer = (query = ""): AnswerState => ({
   query,
   status: "",
