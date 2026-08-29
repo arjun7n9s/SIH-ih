@@ -6,7 +6,12 @@ _REPO_ENV = Path(__file__).resolve().parents[2] / ".env"
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=str(_REPO_ENV), extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=str(_REPO_ENV),
+        extra="ignore",
+        # Vercel often injects blank strings for unset keys; treat those as missing.
+        env_ignore_empty=True,
+    )
 
     use_mock: bool = False
     cors_origins: str = (
