@@ -90,7 +90,7 @@ export function AnswerPanel({ answer }: { answer: AnswerState }) {
                 >
                   <span className="font-medium">[{s.n}] {s.title}</span>
                   <span className="mt-1 block text-xs text-muted line-clamp-2">
-                    {s.excerpt}
+                    {cleanExcerpt(s.excerpt)}
                   </span>
                 </a>
               ))}

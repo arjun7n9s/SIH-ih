@@ -21,7 +21,13 @@ def embed_texts(texts: list[str]) -> list[list[float]]:
     return [row.embedding for row in res.data]
 
 
-def chat_completion(system: str, user: str) -> str:
+def chat_completion(
+    system: str,
+    user: str,
+    *,
+    temperature: float = 0.25,
+    max_tokens: int = 700,
+) -> str:
     c = client()
     if not c:
         raise RuntimeError("AIMLAPI_KEY missing")
@@ -31,6 +37,9 @@ def chat_completion(system: str, user: str) -> str:
             {"role": "system", "content": system},
             {"role": "user", "content": user},
         ],
-        temperature=0.2,
+        temperature=temperature,
+        max_tokens=max_tokens,
     )
-    return (res.choices[0].message.content or "").strip()
+    choice = res.choices[0].message if res.choices else None
+    content = (choice.content if choice else None) or ""
+    return content.strip()

@@ -32,5 +32,5 @@ def labels_for(query: str) -> list[str]:
         first,
         "Finding the closest official passages…",
         "Checking whether two documents disagree…",
-        "Writing an answer with citations…",
+        "Writing a clear, short answer…",
     ]
