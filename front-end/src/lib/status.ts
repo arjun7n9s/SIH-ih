@@ -2,7 +2,7 @@
 
 export function statusLabelsFor(query: string): string[] {
   const q = query.trim().toLowerCase();
-  let first = "Asking the corpus and Gemini…";
+  let first = "Searching campus guidelines…";
   if (/email|e-mail|mail id|faculty|professor|\bprof\b|ईमेल|फैकल्टी|प्रोफेसर/.test(q) && !/fee|fees|शुल्क/.test(q))
     first = "Checking the campus directory…";
   else if (/refund|वापसी|withdraw|cancellation/.test(q)) first = "Reading refund rules…";
@@ -14,8 +14,8 @@ export function statusLabelsFor(query: string): string[] {
 
   return [
     first,
-    "Asking Gemini in parallel…",
-    "A third model is comparing both drafts…",
-    "Writing the final answer…",
+    "Finding the closest official passages…",
+    "Checking the details…",
+    "Writing a clear answer…",
   ];
 }
