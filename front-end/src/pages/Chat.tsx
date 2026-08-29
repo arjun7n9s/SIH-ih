@@ -14,6 +14,7 @@ import {
   transcribeVoice,
   uploadCompanion,
 } from "../lib/api";
+import { statusLabelsFor } from "../lib/status";
 import { emptyAnswer, type AnswerState, type ChatTurn } from "../lib/types";
 
 function uid() {
@@ -76,7 +77,9 @@ function ChatShell() {
     setBanner(null);
     setActiveId(null);
     setDraft("");
-    setLive(emptyAnswer(q));
+    const start = emptyAnswer(q);
+    start.status = statusLabelsFor(q)[0];
+    setLive(start);
     try {
       const final = await runQuery(q, setLive);
       const turn: ChatTurn = {

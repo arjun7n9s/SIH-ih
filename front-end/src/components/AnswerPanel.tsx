@@ -1,6 +1,16 @@
 import { AlertTriangle, ExternalLink } from "lucide-react";
 import type { AnswerState } from "../lib/types";
 
+function cleanExcerpt(text: string) {
+  return text
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 export function AnswerPanel({ answer }: { answer: AnswerState }) {
   return (
     <div className="space-y-4">
@@ -113,9 +123,9 @@ export function AnswerPanel({ answer }: { answer: AnswerState }) {
                         className="opacity-0 transition group-hover:opacity-60"
                       />
                     </span>
-                    <span className="mt-1 block text-xs leading-relaxed text-muted line-clamp-2">
-                      {s.excerpt}
-                    </span>
+                  <span className="mt-1 block text-xs leading-relaxed text-muted line-clamp-2">
+                    {cleanExcerpt(s.excerpt)}
+                  </span>
                   </span>
                 </a>
               ))}
